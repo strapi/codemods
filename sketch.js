@@ -58,3 +58,8 @@ function createBasePluginTemplate() {
   // write file write strapi-server.js
     // require ./src/server
 }
+
+
+// TODO
+// codemod => write const file = require('./path')
+// codemod => write module.exports = {...}

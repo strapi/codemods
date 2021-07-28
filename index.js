@@ -1,11 +1,13 @@
 "use strict";
 
 const fs = require("fs-extra");
-const { resolve, join, relative } = require("path");
-const execa = require("execa");
+const { resolve, join } = require("path");
+const j = require("jscodeshift");
+const { camelCase } = require("lodash");
+
+const { statement } = j.template;
 
 const SERVER_DIRECTORIES = [
-  "config",
   "controllers",
   "middlewares",
   "models",
@@ -15,7 +17,7 @@ const SERVER_DIRECTORIES = [
 
 async function migratePlugin(pluginPath) {
   // Create mock plugin copy
-  await fs.copy(resolve(pluginPath), `./plugin-copy`)
+  await fs.copy(resolve(pluginPath), `./plugin-copy`);
 
   // https://github.com/strapi/plugin-rfc-examples/tree/master/upload
   const plugin = resolve(`./plugin-copy`);
@@ -34,10 +36,22 @@ async function migratePlugin(pluginPath) {
         join(plugin, directory),
         join(plugin, "src", "server", directory)
       );
+
+      await createDirectoryIndex(join(plugin, "src", "server", directory));
     }
 
+    // handle config
+    const pluginConfig = join(plugin, "config");
+    await fs.move(
+      join(pluginConfig, "functions", "bootstrap.js"),
+      join(plugin, "src", "server", "bootstrap.js")
+    );
+    await fs.remove(join(pluginConfig, "functions"))
+    const configDirectory = await fs.readdir(join(plugin, "config"));
+    console.log(configDirectory)
+
     await fs.copy(
-      "./utils/server-index.js",
+      "./utils/module-exports.js",
       join(plugin, "src", "server", "index.js")
     );
 
@@ -45,30 +59,92 @@ async function migratePlugin(pluginPath) {
     await fs.move(join(plugin, "admin", "src"), join(plugin, "src", "admin"));
     await fs.remove(join(plugin, "admin"));
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 }
 
-function hasYarn() {
-  try {
-    const { exitCode } = execa.sync("yarn --version", { shell: true });
+// getModels
+// getControllers
+// getBootstrap
+// getServices
+// getHooks
 
-    if (exitCode === 0) return true;
-    return false;
-  } catch (err) {
-    return false;
-  }
+async function createDirectoryIndex(dir) {
+  // get all files from the dir
+  const filesToImport = await fs.readdir(dir);
+
+  const indexPath = join(dir, "index.js");
+  // create index.js for dir
+  await fs.copy(join(__dirname, "utils", "module-exports.js"), indexPath);
+  // import all files to dir
+  await addImportsToFile(indexPath, filesToImport);
+  await addModulesToExport(indexPath, filesToImport);
 }
 
-function runInstall(path) {
-  if (hasYarn()) {
-    return execa("yarn", ["install"], {
-      cwd: path,
-      stdin: "ignore",
-    });
-  }
+/********************
+ * TRANSFORMS
+ ********************/
 
-  return execa("npm", ["install"], { cwd: path, stdin: "ignore" });
+/**
+ *
+ * @param {string} filePath
+ * @param {array} imports
+ */
+async function addImportsToFile(filePath, imports) {
+  const fileContent = await fs.readFile(filePath);
+  const file = fileContent.toString();
+  const root = j(file);
+  const body = root.find(j.Program).get("body");
+
+  imports.forEach((fileImport) => {
+    const filename = fileImport.replace(".js", "");
+
+    const declaration = statement`const ${camelCase(
+      filename
+    )} = require(${j.literal("./" + filename)});\n`;
+
+    const hasUseStrict = body.get(0).value.directive === "use strict";
+    if (hasUseStrict) {
+      // When use strict is present import after
+      body.get(0).insertAfter(declaration);
+    } else {
+      //  Otherwise add them to the top of the file
+      body.unshift(declaration);
+    }
+  });
+
+  await fs.writeFile(filePath, root.toSource());
+}
+async function addModulesToExport(filePath, modules) {
+  const fileContent = await fs.readFile(filePath);
+  const file = fileContent.toString();
+  const root = j(file);
+  const moduleExports = root.find(j.AssignmentExpression, {
+    left: {
+      object: {
+        name: "module",
+      },
+      property: {
+        name: "exports",
+      },
+    },
+  });
+
+  modules.forEach((module) => {
+    const moduleName = module.replace(".js", "");
+    // Get all varaiable declarations that are importing mo
+    moduleExports
+      .get()
+      .value.right.properties.push(
+        j.property(
+          "init",
+          j.identifier(camelCase(moduleName)),
+          j.identifier(camelCase(moduleName))
+        )
+      );
+  });
+
+  await fs.writeFile(filePath, root.toSource());
 }
 
 migratePlugin("../../plugins/strapi-plugin-stripe-payment");
