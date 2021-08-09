@@ -1,3 +1,7 @@
+/**
+ * Replaces .query().find() with .query().findMany()
+ * 
+ */
 export default function changeFindToFindMany(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
