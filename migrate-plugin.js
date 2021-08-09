@@ -4,6 +4,7 @@ const fs = require("fs-extra");
 const { resolve, join } = require("path");
 const j = require("jscodeshift");
 const { camelCase } = require("lodash");
+const { EROFS } = require("constants");
 
 const { statement } = j.template;
 
@@ -29,11 +30,26 @@ async function migratePlugin(pluginPath) {
 
     // move server files to /src/server
     for (const directory of SERVER_DIRECTORIES) {
-      await moveDirectory(plugin, directory);
+      await moveToServer(plugin, "/", directory);
+      
+      // Quick fix to remove lifecycle file from models
+      // This will not work if models are nested in folders
+      if (directory === "models") {
+        const modelsDir = await fs.readdir("./plugin-copy/src/server/models");
+        modelsDir.forEach((model) => {
+          if (!model.includes("settings")) {
+            fs.removeSync(join("./plugin-copy/src/server/models", model));
+          }
+        });
+      }
+
+      await createDirectoryIndex(join(plugin, "src", "server", directory));
     }
 
+    // move bootstrap to /src/server/bootstrap.js
     await moveBootstrapFunction(plugin);
-    await moveRoutes(plugin)
+    // move bootstrap to /src/server/routes.js
+    await moveToServer(plugin, "config", "routes.json");
     await createServerIndex(join(plugin, "src", "server"));
     // move admin files to /src
     await fs.move(join(plugin, "admin", "src"), join(plugin, "src", "admin"));
@@ -43,27 +59,8 @@ async function migratePlugin(pluginPath) {
   }
 }
 
-async function moveRoutes(pluginPath) {
-  
-  const routes = join(pluginPath, "config", "routes.json")
-  await fs.move(
-    routes,
-    join(pluginPath, "src", "server", "routes.json")
-  );
-}
-
 async function moveBootstrapFunction(pluginPath) {
-  const bootstrapOrigin = join(
-    pluginPath,
-    "config",
-    "functions",
-    "bootstrap.js"
-  );
-
-  await fs.move(
-    bootstrapOrigin,
-    join(pluginPath, "src", "server", "bootstrap.js")
-  );
+  await moveToServer(pluginPath, join("config", "functions"), "bootstrap.js");
 
   const functionsDir = join(pluginPath, "config", "functions");
   const dirContent = await fs.readdir(functionsDir);
@@ -73,14 +70,15 @@ async function moveBootstrapFunction(pluginPath) {
   }
 }
 
-async function moveDirectory(origin, destination) {
-  const hasDir = await fs.pathExists(join(origin, destination));
-  if (!hasDir) return;
+async function moveToServer(pluginPath, originDir, destination) {
+  console.log(`copying ${destination} to`, join(pluginPath, originDir, destination));
+  const exists = await fs.pathExists(join(pluginPath, originDir, destination));
+  if (!exists) return;
 
-  const serverPath = join(origin, "src", "server");
-  await fs.move(join(origin, destination), join(serverPath, destination));
-
-  await createDirectoryIndex(join(serverPath, destination));
+  await fs.move(
+    join(pluginPath, originDir, destination),
+    join(pluginPath, "src", "server", destination)
+  );
 }
 
 async function createServerIndex(serverDir) {
@@ -88,10 +86,9 @@ async function createServerIndex(serverDir) {
   await fs.copy(join(__dirname, "utils", "module-exports.js"), indexPath);
 
   const dirContent = await fs.readdir(serverDir);
-  console.log(dirContent)
   const filesToImport = dirContent.filter((file) => file !== "index.js");
-  
-  await addImportsToFile(indexPath, filesToImport);
+
+  await importFilesToIndex(indexPath, filesToImport);
   await addModulesToExport(indexPath, filesToImport);
 }
 
@@ -108,7 +105,7 @@ async function createDirectoryIndex(dir) {
   // import all files to dir
   const filesToImport = dirContent.filter((file) => file.includes(".js"));
 
-  await addImportsToFile(indexPath, filesToImport);
+  await importFilesToIndex(indexPath, filesToImport);
   await addModulesToExport(indexPath, filesToImport);
 }
 
@@ -121,15 +118,16 @@ async function createDirectoryIndex(dir) {
  * @param {string} filePath
  * @param {array} imports
  */
-async function addImportsToFile(filePath, imports) {
+async function importFilesToIndex(filePath, imports) {
   const fileContent = await fs.readFile(filePath);
   const file = fileContent.toString();
   const root = j(file);
   const body = root.find(j.Program).get("body");
 
   imports.forEach((fileImport) => {
-    // TODO: fix this shit
-    const filename = fileImport.split(".").slice(0, 1)
+    // TODO: This is not reliable
+    // Removes extensions from name
+    const filename = fileImport.split(".").slice(0, 1);
 
     const declaration = statement`const ${camelCase(
       filename
@@ -164,8 +162,9 @@ async function addModulesToExport(filePath, modules) {
   });
 
   modules.forEach((mod) => {
-    // TODO: fix this shit
-    const moduleName = mod.split(".").slice(0, 1)
+    // TODO: This is not reliable
+    // Removes extensions from name
+    const moduleName = mod.split(".").slice(0, 1);
     const property = j.property(
       "init",
       j.identifier(camelCase(moduleName)),
@@ -180,4 +179,23 @@ async function addModulesToExport(filePath, modules) {
   await fs.writeFile(filePath, root.toSource());
 }
 
-migratePlugin("../plugin-tests/strapi-plugin-content-manager");
+const args = process.argv.slice(2);
+
+try {
+  if (args.length === 0) {
+    console.error(
+      "No argument provided, please provide the path to the plugin you want to migrate"
+    );
+  }
+
+  if (args.length > 1) {
+    console.error(
+      "Too many arguments, please provide the path to the plugin you want to migrate"
+    );
+  }
+} catch (error) {
+  console.error(error.message);
+}
+
+const [pluginPath] = args;
+migratePlugin(pluginPath);
