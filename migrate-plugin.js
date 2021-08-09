@@ -4,7 +4,6 @@ const fs = require("fs-extra");
 const { resolve, join } = require("path");
 const j = require("jscodeshift");
 const { camelCase } = require("lodash");
-const { EROFS } = require("constants");
 
 const { statement } = j.template;
 
@@ -31,7 +30,7 @@ async function migratePlugin(pluginPath) {
     // move server files to /src/server
     for (const directory of SERVER_DIRECTORIES) {
       await moveToServer(plugin, "/", directory);
-      
+
       // Quick fix to remove lifecycle file from models
       // This will not work if models are nested in folders
       if (directory === "models") {
