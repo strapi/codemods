@@ -1,7 +1,7 @@
-const _ = require("lodash")
-_.mixin(require("lodash-inflection"))
+const _ = require("lodash");
+_.mixin(require("lodash-inflection"));
 
-export default function usePluginGetters(file, api) {
+module.exports = function usePluginGetters(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
 
@@ -37,4 +37,4 @@ export default function usePluginGetters(file, api) {
   });
 
   return root.toSource();
-}
+};

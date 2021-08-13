@@ -2,6 +2,6 @@
 
 jest.autoMockOff();
 
-const defineTest = require("../../test-utils").defineTest;
+const defineTest = require("jscodeshift/dist/testUtils").defineTest;
 
 defineTest(__dirname, "update-strapi-scoped-imports");

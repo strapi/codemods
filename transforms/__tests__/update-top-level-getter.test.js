@@ -4,4 +4,4 @@ jest.autoMockOff();
 
 const defineTest = require("jscodeshift/dist/testUtils").defineTest;
 
-defineTest(__dirname, "change-find-to-findMany");
+defineTest(__dirname, "update-top-level-getter");
