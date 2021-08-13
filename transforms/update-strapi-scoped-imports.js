@@ -1,7 +1,7 @@
 /**
  * Replace strapi-some-package with @strapi/some-package
  */
-export default function updateStrapiScopedImports(file, api) {
+module.exports = function updateStrapiScopedImports(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
   const imports = root.find(j.CallExpression, {

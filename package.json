@@ -3,10 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
   "dependencies": {
     "fs-extra": "^10.0.0",
     "jscodeshift": "^0.11.0",
     "lodash": "^4.17.21",
     "lodash-inflection": "^1.5.0"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6"
   }
 }
