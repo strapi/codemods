@@ -11,15 +11,38 @@ const strapiPackages = {
   "strapi": "@strapi/strapi",
   "strapi-admin": "@strapi/admin",
   "strapi-connector-bookshelf": toBeDeleted,
+  "strapi-database": "@strapi/database",
+  "strapi-generate": "@strapi/generate",
+  "strapi-generate-api": "@strapi/generate-api",
+  "strapi-generate-controller": "@strapi/generate-controller",
+  "strapi-generate-model": "@strapi/generate-model",
+  "strapi-generate-new": "@strapi/generate-new",
+  "strapi-generate-plugin": "@strapi/generate-plugin",
+  "strapi-generate-policy": "@strapi/generate-policy",
+  "strapi-generate-service": "@strapi/generate-service",
+  "strapi-helper-plugin": "@strapi/helper-plugin",
+  "strapi-hook-ejs": toBeDeleted,
+  "strapi-hook-redis": toBeDeleted,
+  "strapi-middleware-views": toBeDeleted,
   "strapi-plugin-content-manager": "@strapi/plugin-content-manager",
   "strapi-plugin-content-type-builder": "@strapi/plugin-content-type-builder",
   "strapi-plugin-documentation": "@strapi/plugin-documentation",
   "strapi-plugin-email": "@strapi/plugin-email",
   "strapi-plugin-graphql": "@strapi/plugin-graphql",
   "strapi-plugin-i18n": "@strapi/plugin-i18n",
+  "strapi-plugin-sentry": "@strapi/plugin-sentry",
   "strapi-plugin-upload": "@strapi/plugin-upload",
   "strapi-plugin-users-permissions": "@strapi/plugin-users-permissions",
-  "strapi-utils": "@strapi/utils"
+  "strapi-provider-amazon-ses": "@strapi/provider-email-amazon-ses",
+  "strapi-provider-email-mailgun": "@strapi/provider-email-mailgun",
+  "strapi-provider-email-nodemailer": "@strapi/provider-email-nodemailer",
+  "strapi-provider-email-sendgrid": "@strapi/provider-email-sendgrid",
+  "strapi-provider-email-sendmail": "@strapi/provider-email-sendmail",
+  "strapi-provider-upload-aws-s3": "@strapi/provider-upload-aws-s3",
+  "strapi-provider-upload-cloudinary": "@strapi/provider-upload-cloudinary",
+  "strapi-provider-upload-local": "@strapi/provider-upload-local",
+  "strapi-provider-upload-rackspace": "@strapi/provider-upload-rackspace",
+  "strapi-utils": "@strapi/utils",
 };
 
 async function getLatestStrapiVersion() {
@@ -28,11 +51,16 @@ async function getLatestStrapiVersion() {
 }
 
 async function updatePackageDependencies(appPath) {
-  const packageJSONPath = path.resolve(appPath, 'package.json');
   // Import the app's package.json as an object
-  const packageJSON = require(packageJSONPath);
+  const packageJSONPath = path.resolve(appPath, 'package.json');
+  let packageJSON;
+  try {
+    packageJSON = require(packageJSONPath);
+  } catch (error) {
+    throw Error('Could not find a package.json. Are you sure this is a Strapi app?');
+  }
   if (_.isEmpty(packageJSON.dependencies)) {
-    console.error(`${appPath} does not have dependencies`)
+    throw Error(`${appPath} does not have dependencies`)
   }
 
   // Get the latest Strapi release version
@@ -45,9 +73,13 @@ async function updatePackageDependencies(appPath) {
     if (newStrapiDependency) {
       // The dependency is a v3 Strapi package, remove it
       delete v4PackageJSON.dependencies[depName];
-      // Replace if it there's a matching v4 package
-      if (newStrapiDependency !== toBeDeleted) {
+      if (newStrapiDependency === toBeDeleted) {
+        // Warn user if the dependency doesn't exist anymore
+        console.warn(`warning: ${depName} does not exist anymore in Strapi v4`)
+      } else {
+        // Replace dependency if there's a matching v4 package
         v4PackageJSON.dependencies[newStrapiDependency] = latestStrapiVersion;
+        
       }
     }
   })
@@ -59,19 +91,20 @@ const args = process.argv.slice(2);
 
 try {
   if (args.length === 0) {
-    console.error(
+    throw Error(
       "No argument provided, please provide the path to your Strapi app"
     );
   }
 
   if (args.length > 1) {
-    console.error(
+    throw Error(
       "Too many arguments, please only provide the path to your Strapi app"
     );
   }
+
+  const [appPath] = args;
+  updatePackageDependencies(appPath);
 } catch (error) {
   console.error(error.message);
 }
 
-const [appPath] = args;
-updatePackageDependencies(appPath);
