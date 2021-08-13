@@ -1,10 +1,10 @@
 // Update plugin getters
 // strapi.plugins['plugin-name'] => strapi.plugin("plugin-name")
-// TOOD: should be able to be used with models, controllers, services, etc...
-export function updateTopLevelGetters(file, api) {
+// strapi.plugins.pluginName => strapi.plugin("plugin-name")
+export default function updateTopLevelGetter(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const pluginGetter = root.find(j.MemberExpression, {
+  const foundPlugin = root.find(j.MemberExpression, {
     object: {
       object: {
         name: "strapi",
@@ -15,12 +15,16 @@ export function updateTopLevelGetters(file, api) {
     },
   });
 
-  pluginGetter.replaceWith(() => {
+  foundPlugin.replaceWith(({node}) => {
+    const name = node.property.name ? node.property.name : node.property.value
+    
     return j.callExpression(
       j.memberExpression(j.identifier("strapi"), j.identifier("plugin")),
-      [j.literal("plugin-name")]
+      [j.literal(name)]
     );
   });
+  
+
 
   return root.toSource();
 }

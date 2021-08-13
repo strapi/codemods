@@ -1,3 +1,6 @@
+/**
+ * Replace strapi-some-package with @strapi/some-package
+ */
 export default function updateStrapiScopedImports(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
