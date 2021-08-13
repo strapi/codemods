@@ -1041,6 +1041,11 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
+lodash-inflection@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/lodash-inflection/-/lodash-inflection-1.5.0.tgz#344e5a8030882d51af98e0d613bb0547c8b7ddc7"
+  integrity sha1-NE5agDCILVGvmODWE7sFR8i33cc=
+
 lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
