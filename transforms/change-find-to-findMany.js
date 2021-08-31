@@ -2,7 +2,7 @@
  * Replaces .query().find() with .query().findMany()
  * 
  */
-export default function changeFindToFindMany(file, api) {
+module.exports = function changeFindToFindMany(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
   const strapiQueries = root.find(j.CallExpression, {
