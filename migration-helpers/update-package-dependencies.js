@@ -4,7 +4,7 @@ const fse = require("fs-extra");
 const path = require("path");
 const _ = require("lodash");
 const axios = require("axios");
-const { strapiPackages, toBeDeleted } = require("./utils/strapi-packages");
+const { strapiPackages, toBeDeleted } = require("../utils/strapi-packages");
 
 async function getLatestStrapiVersion() {
   const response = await axios.get(`https://api.npms.io/v2/package/${encodeURIComponent('@strapi/strapi')}`);
