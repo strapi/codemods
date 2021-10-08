@@ -1,5 +1,5 @@
 const _ = require("lodash");
-_.mixin(require("lodash-inflection"));
+const pluralize = require("pluralize")
 
 module.exports = function usePluginGetters(file, api) {
   const j = api.jscodeshift;
@@ -28,7 +28,7 @@ module.exports = function usePluginGetters(file, api) {
 
     foundGetter.replaceWith(({ node }) => {
       const name = node.property.name || node.property.value;
-      const property = j.callExpression(j.identifier(_.singularize(getter)), [
+      const property = j.callExpression(j.identifier(pluralize.singular(getter)), [
         j.literal(name),
       ]);
 

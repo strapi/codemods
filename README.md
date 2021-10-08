@@ -2,16 +2,23 @@
 
 # WIP
 
-This repo does two things:
+This repo uses jscodeshift and node scripts to migrate a Strapi v3 application or plugin to v4
 
-1. Provides a set of transform functions to be used when migrating a Strapi application from v3 to v4.  These are found in the `transforms` directory
-2. Provides a script, `migrate-plugin.js` , that takes a Strapi plugin and attempts to migrate the plugin by moving files and applying codemods where needed.
+## Migration helpers
+
+### update-api-folder-structure
+
+Navigate to the strapi project you want to migrate
+
+```bash
+node <path/to/strapi-codemods/migration-helpers/update-api-folder-structure>
+```
 
 ## Transforms
 
-You can install `jscodeshift` globally or use npx.  See jscodeshift docs for all available options: [https://github.com/facebook/jscodeshift](https://github.com/facebook/jscodeshift)
+You can install `jscodeshift` globally or use npx. See jscodeshift docs for all available options: [https://github.com/facebook/jscodeshift](https://github.com/facebook/jscodeshift)
 
-To use this repository for migrating a strapi application, I recommend cloning the repo into the application you want to migrate. 
+To use this repository for migrating a strapi application, I recommend cloning the repo into the application you want to migrate.
 
 The commands provided below will make changes to your source code
 
@@ -19,7 +26,7 @@ I recommend initialize a git repository if you don't already have one and add `s
 
 Make sure your git tree is clean before running any commands, and the git diff after to see what changed.
 
-*There is a dry run option from jscodeshift but it doesn't show you what was changed*
+_There is a dry run option from jscodeshift but it doesn't show you what was changed_
 
 Example jscodehsift command:
 
@@ -27,7 +34,7 @@ Example jscodehsift command:
 npx jscodeshift -t <path-to-transform> <path-to-file(s)>
 ```
 
-*You can pass multiple files or a directory*
+_You can pass multiple files or a directory_
 
 ### change-find-to-findMany
 
