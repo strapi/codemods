@@ -1,4 +1,6 @@
 module.exports = function useArrowFunctionForService(file, api) {
+  // Don't run on the directory's index
+  if (file.path.includes('index')) return
   const j = api.jscodeshift;
   const root = j(file.source);
 
@@ -18,6 +20,14 @@ module.exports = function useArrowFunctionForService(file, api) {
     [],
     objectExpression
   );
+
+  const property = j.property(
+    "init",
+    j.identifier("strapi"),
+    j.identifier("strapi")
+  );
+
   moduleExports.get().value.right = arrowFunctionExpression;
+
   return root.toSource();
 };
