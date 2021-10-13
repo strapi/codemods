@@ -1,37 +1,54 @@
 # Codemod Readme
 
-# WIP
+This repo offers scripts to help migrate Strapi applications and plugins from v3 to v4
 
-This repo uses jscodeshift and node scripts to migrate a Strapi v3 application or plugin to v4
+To use the scripts, clone this repo and run all commands from the root.
 
 ## Migration helpers
 
-### update-api-folder-structure
+### update-plugin-folder-structure
 
-Navigate to the strapi project you want to migrate
+Organizes v3 Strapi plugin into an acceptable v4 Strapi plugin file structure
+
+`pathToV3Plugin`: *required*
+`pathForV4Plugin`: *defaults to:* `<pathToV3Plugin>-v4`
 
 ```bash
-node <path/to/strapi-codemods/migration-helpers/update-api-folder-structure>
+node ./migrations-helpers/upate-plugin-folder-structure <pathToV3Plugin> [pathForV4Plugin]
+```
+
+### update-api-folder-structure
+
+Organizes a v3 Strapi app into the new v4 Strapi app file structure
+
+`pathToStrapiApp`:  *required*
+
+```bash
+node ./migration-helpers/update-api-folder-structure <pathToStrapiApp>
+```
+
+### update-package-dependencies
+
+Updates all Strapi dependencies found in a v3 Strapi app or plugin
+
+`pathToStrapiApp`:  *required*
+
+```bash
+node ./migration-helpers/update-package-dependencies <pathToStrapiApp>
 ```
 
 ## Transforms
 
 You can install `jscodeshift` globally or use npx. See jscodeshift docs for all available options: [https://github.com/facebook/jscodeshift](https://github.com/facebook/jscodeshift)
 
-To use this repository for migrating a strapi application, I recommend cloning the repo into the application you want to migrate.
-
 The commands provided below will make changes to your source code
 
-I recommend initialize a git repository if you don't already have one and add `strapi-codemods` to the .gitignore
-
-Make sure your git tree is clean before running any commands, and the git diff after to see what changed.
-
-_There is a dry run option from jscodeshift but it doesn't show you what was changed_
+Before running any commands, be sure you have initialized a git repository, the working tree is clean, you've pushed your code to GitHub, and you are on a new branch.
 
 Example jscodehsift command:
 
 ```bash
-npx jscodeshift -t <path-to-transform> <path-to-file(s)>
+npx jscodeshift -t <path-to-transform> <path-to-file(s)-or-folder>
 ```
 
 _You can pass multiple files or a directory_
@@ -41,13 +58,13 @@ _You can pass multiple files or a directory_
 Replaces `.query().find()` with `.query().findMany()`
 
 ```bash
-npx jscodeshift -t ./strapi-codemods/transforms/change-find-to-findMany.js <path-to-file>
+npx jscodeshift -t ./codemods/transforms/change-find-to-findMany.js <path-to-file>
 ```
 
 example (update bootstrap seed script):
 
 ```bash
-npx jscodeshift -t ./strapi-codemods/transforms/change-find-to-findMany.js  ./config/functions/bootstrap.js
+npx jscodeshift -t ./codemods/transforms/change-find-to-findMany.js  ./config/functions/bootstrap.js
 ```
 
 ### update-strapi-scoped-imports
@@ -55,11 +72,11 @@ npx jscodeshift -t ./strapi-codemods/transforms/change-find-to-findMany.js  ./co
 Replace `strapi-some-package` with `@strapi/some-package`
 
 ```bash
-npx jscodeshift -t ./strapi-codemods/transforms/update-strapi-scoped-imports.js  <path-to-file>>
+npx jscodeshift -t ./codemods/transforms/update-strapi-scoped-imports.js  <path-to-file>
 ```
 
 example (update all imports found in ./api):
 
 ```bash
-npx jscodeshift -t ./strapi-codemods/transforms/update-strapi-scoped-imports.js  ./api
+npx jscodeshift -t ./codemods/transforms/update-strapi-scoped-imports.js  ./api
 ```
