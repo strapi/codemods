@@ -10,8 +10,9 @@ To use the scripts, clone this repo and run all commands from the root.
 
 Organizes v3 Strapi plugin into an acceptable v4 Strapi plugin file structure
 
-`pathToV3Plugin`: *required*
-`pathForV4Plugin`: *defaults to:* `<pathToV3Plugin>-v4`
+`pathToV3Plugin`: _required_
+
+`pathForV4Plugin`: _defaults to:_ `<pathToV3Plugin>-v4`
 
 ```bash
 node ./migrations-helpers/upate-plugin-folder-structure <pathToV3Plugin> [pathForV4Plugin]
@@ -21,7 +22,7 @@ node ./migrations-helpers/upate-plugin-folder-structure <pathToV3Plugin> [pathFo
 
 Organizes a v3 Strapi app into the new v4 Strapi app file structure
 
-`pathToStrapiApp`:  *required*
+`pathToStrapiApp`: _required_
 
 ```bash
 node ./migration-helpers/update-api-folder-structure <pathToStrapiApp>
@@ -31,7 +32,7 @@ node ./migration-helpers/update-api-folder-structure <pathToStrapiApp>
 
 Updates all Strapi dependencies found in a v3 Strapi app or plugin
 
-`pathToStrapiApp`:  *required*
+`pathToStrapiApp`: _required_
 
 ```bash
 node ./migration-helpers/update-package-dependencies <pathToStrapiApp>
@@ -55,28 +56,46 @@ _You can pass multiple files or a directory_
 
 ### change-find-to-findMany
 
-Replaces `.query().find()` with `.query().findMany()`
+`.query().find()` => `.query().findMany()`
 
 ```bash
-npx jscodeshift -t ./codemods/transforms/change-find-to-findMany.js <path-to-file>
-```
-
-example (update bootstrap seed script):
-
-```bash
-npx jscodeshift -t ./codemods/transforms/change-find-to-findMany.js  ./config/functions/bootstrap.js
+npx jscodeshift -t ./transforms/change-find-to-findMany.js <path-to-file(s)-or-folder>
 ```
 
 ### update-strapi-scoped-imports
 
-Replace `strapi-some-package` with `@strapi/some-package`
+`strapi-some-package` => `@strapi/some-package`
 
 ```bash
-npx jscodeshift -t ./codemods/transforms/update-strapi-scoped-imports.js  <path-to-file>
+npx jscodeshift -t ./codemods/transforms/update-strapi-scoped-imports.js  <path-to-file(s)-or-folder>
 ```
 
-example (update all imports found in ./api):
+### change-model-getters-to-content-types
+
+`.models` => `.contentTypes`
 
 ```bash
-npx jscodeshift -t ./codemods/transforms/update-strapi-scoped-imports.js  ./api
+npx jscodeshift -t ./transforms/change-model-getters-to-content-types <path-to-file(s)-or-folder>
+```
+
+### update-top-level-plugin-getter
+
+`strapi.plugins['some-plugin']` => `strapi.plugin('some-plugin')`
+
+```bash
+npx jscodeshift -t ./transforms/update-top-level-getters <path-to-file(s)-or-folder>
+```
+
+### use-plugin-getters
+
+`strapi.plugin('some-plugin').controllers['some-controller']` => `strapi.plugin('some-plugin').controller('some-controller')`
+
+```bash
+npx jscodeshift -t ./transforms/use-plugin-getters <path-to-file(s)-or-folder>
+```
+
+### use-arrow-function-for-service-export
+
+```bash
+npx jscodeshift -t ./transforms/use-arrow-function-for-service-export <path-to-file(s)-or-folder>
 ```
