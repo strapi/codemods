@@ -5,7 +5,7 @@
 const { join } = require("path");
 const fs = require("fs-extra");
 const _ = require("lodash");
-const pluralize = require("pluralize")
+const pluralize = require("pluralize");
 
 /**
  * @description Migrates settings.json to schema.json
@@ -39,8 +39,8 @@ const convertModelToContentType = async (apiPath, contentTypeName) => {
     // Create a copy
     const schemaJson = { ...settingsJson };
     const infoUpdate = {
-      singularName: pluralize.singular(contentTypeName),
-      pluralName: pluralize(contentTypeName),
+      singularName: _.kebabCase(pluralize.singular(contentTypeName)),
+      pluralName: _.kebabCase(pluralize(contentTypeName)),
       displayName: _.upperFirst(contentTypeName),
       name: contentTypeName,
     };
