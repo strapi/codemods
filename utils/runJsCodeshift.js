@@ -4,7 +4,7 @@ const execa = require("execa");
 
 /**
  * @description Executes jscodeshift
- * 
+ *
  * @param {string} path - the path where the transform should run
  * @param {string} transform - the name of the transform file
  */

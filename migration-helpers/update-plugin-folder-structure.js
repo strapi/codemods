@@ -80,6 +80,11 @@ async function moveBootstrapFunction(pluginPath) {
   const functionsDir = join(pluginPath, "config", "functions");
   const dirContent = await fs.readdir(functionsDir);
 
+  runJsCodeshift(
+    join(pluginPath, "server", "bootstrap.js"),
+    "add-strapi-to-bootstrap-params"
+  );
+
   if (!dirContent.length) {
     await fs.remove(functionsDir);
   }
