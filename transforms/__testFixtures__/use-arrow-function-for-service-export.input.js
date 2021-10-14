@@ -1,12 +1,22 @@
-function foo() {
-  console.log("code");
-}
+const file = require("file");
+
+const someVar = { name: "paul" };
+
+const foo = () => {
+  console.log(strapi);
+};
 
 function bar() {
-  console.log("more code");
+  console.log(strapi);
 }
 
 module.exports = {
   foo,
-  bar
+  bar,
+  plop() {
+    console.log(strapi);
+  },
+  plunk: () => {
+    console.log(strapi);
+  },
 };

@@ -52,8 +52,6 @@ Example jscodehsift command:
 npx jscodeshift -t <path-to-transform> <path-to-file(s)-or-folder>
 ```
 
-_You can pass multiple files or a directory_
-
 ### change-find-to-findMany
 
 `.query().find()` => `.query().findMany()`

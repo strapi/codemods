@@ -1,30 +1,45 @@
-module.exports = function useArrowFunctionForService(file, api) {
-  // Don't run on the directory's index
-  if (file.path.includes('index')) return
+module.exports = function useArrowFunctionForServiceExport(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
+
+  const remainingBody = [];
+  const functionDeclarations = [];
+
+  for (const node of root.get().node.program.body) {
+    let isArrowFunction = false;
+    if (node.type === "VariableDeclaration") {
+      isArrowFunction = node.declarations.filter((dec) => dec.init.type === "ArrowFunctionExpression").length > 0;
+    }
+
+    if (node.type === "FunctionDeclaration" || isArrowFunction) {
+      functionDeclarations.push(node);
+    } else {
+      remainingBody.push(node);
+    }
+  }
+
+  root.get().node.program.body = remainingBody;
 
   const moduleExports = root.find(j.AssignmentExpression, {
     left: {
       object: {
-        name: "module",
+        name: "module"
       },
       property: {
-        name: "exports",
-      },
+        name: "exports"
+      }
     },
+    right: {
+      type: "ObjectExpression"
+    }
   });
 
+  const strapiArg = j.property("init", j.identifier("strapi"), j.identifier("strapi"));
   const objectExpression = moduleExports.get().value.right;
-  const arrowFunctionExpression = j.arrowFunctionExpression(
-    [],
-    objectExpression
-  );
 
-  const property = j.property(
-    "init",
-    j.identifier("strapi"),
-    j.identifier("strapi")
+  const arrowFunctionExpression = j.arrowFunctionExpression(
+    [j.objectPattern([{ ...strapiArg, shorthand: true, loc: { indent: 0 } }])],
+    j.blockStatement([...functionDeclarations, j.returnStatement(j.objectExpression(objectExpression.properties))])
   );
 
   moduleExports.get().value.right = arrowFunctionExpression;

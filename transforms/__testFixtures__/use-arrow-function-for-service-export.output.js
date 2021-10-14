@@ -1,12 +1,30 @@
-function foo() {
-  console.log("code");
-}
+const file = require("file");
 
-function bar() {
-  console.log("more code");
-}
+const someVar = { name: "paul" };
 
-module.exports = () => ({
-  foo,
-  bar
-});
+module.exports = (
+  {
+    strapi
+  }
+) => {
+  const foo = () => {
+    console.log(strapi);
+  };
+
+  function bar() {
+    console.log(strapi);
+  }
+
+  return {
+    foo,
+    bar,
+
+    plop() {
+      console.log(strapi);
+    },
+
+    plunk: () => {
+      console.log(strapi);
+    }
+  };
+};

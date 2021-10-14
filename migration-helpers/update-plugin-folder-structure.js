@@ -6,7 +6,7 @@ const j = require("jscodeshift");
 const { camelCase } = require("lodash");
 const convertModelToContentType = require(`./convert-models-to-content-types`);
 const updateRoutes = require(`./update-routes`);
-const runJsCodeshift = require('../utils/runJsCodeshift')
+const runJsCodeshift = require("../utils/runJsCodeshift");
 
 const { statement } = j.template;
 
@@ -41,12 +41,18 @@ async function migratePlugin(v3PluginPath, v4DestinationPath) {
     // Move all server files to /server
     for (const directory of SERVER_DIRECTORIES) {
       await moveToServer(v4Plugin, ".", directory);
-
+      // Convert services to function export before creating index file
+      if (directory === "services") {
+        runJsCodeshift(
+          join(v4Plugin, "server", "services"),
+          "use-arrow-function-for-service-export"
+        );
+      }
+      // Create index file for directory
       if (directory === "models") {
         await convertModelToContentType(join(v4Plugin, "server"));
         await createContentTypeIndex(join(v4Plugin, "server", "content-types"));
       } else {
-        // Create index file for directory
         await createDirectoryIndex(join(v4Plugin, "server", directory));
       }
     }
@@ -59,11 +65,7 @@ async function migratePlugin(v3PluginPath, v4DestinationPath) {
     // Move policies
     await moveToServer(v4Plugin, "config", "policies");
     await createDirectoryIndex(join(v4Plugin, "server", "policies"));
-    // update services
-    runJsCodeshift(
-      join(v4Plugin, 'server', "services"),
-      "use-arrow-function-for-service-export"
-    );
+
     // Create src/server index
     await createServerIndex(join(v4Plugin, "server"));
     console.log(`finished migrating v3 plugin to v4 at ${v4Plugin}`);
