@@ -73,7 +73,7 @@ npx jscodeshift -t ./codemods/transforms/update-strapi-scoped-imports.js  <path-
 `.models` => `.contentTypes`
 
 ```bash
-npx jscodeshift -t ./transforms/change-model-getters-to-content-types <path-to-file(s)-or-folder>
+npx jscodeshift -t ./transforms/change-model-getters-to-content-types.js <path-to-file(s)-or-folder>
 ```
 
 ### update-top-level-plugin-getter
@@ -81,7 +81,7 @@ npx jscodeshift -t ./transforms/change-model-getters-to-content-types <path-to-f
 `strapi.plugins['some-plugin']` => `strapi.plugin('some-plugin')`
 
 ```bash
-npx jscodeshift -t ./transforms/update-top-level-getters <path-to-file(s)-or-folder>
+npx jscodeshift -t ./transforms/update-top-level-getters.js <path-to-file(s)-or-folder>
 ```
 
 ### use-plugin-getters
@@ -89,11 +89,17 @@ npx jscodeshift -t ./transforms/update-top-level-getters <path-to-file(s)-or-fol
 `strapi.plugin('some-plugin').controllers['some-controller']` => `strapi.plugin('some-plugin').controller('some-controller')`
 
 ```bash
-npx jscodeshift -t ./transforms/use-plugin-getters <path-to-file(s)-or-folder>
+npx jscodeshift -t ./transforms/use-plugin-getters.js <path-to-file(s)-or-folder>
 ```
 
 ### use-arrow-function-for-service-export
 
 ```bash
-npx jscodeshift -t ./transforms/use-arrow-function-for-service-export <path-to-file(s)-or-folder>
+npx jscodeshift -t ./transforms/use-arrow-function-for-service-export.js <path-to-file(s)-or-folder>
+```
+
+### add-strapi-to-bootstrap-params
+
+```bash
+npx jscodeshift -t ./transforms/add-strapi-to-bootstrap-params.js <path-to-file(s)-or-folder>
 ```
