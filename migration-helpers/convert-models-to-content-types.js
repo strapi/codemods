@@ -20,8 +20,8 @@ const convertModelToContentType = async (apiPath, contentTypeName) => {
     `${contentTypeName}.settings.json`
   );
 
-  const exists = await fs.exists(settingsJsonPath);
-  if (!exists) {
+  const settingsExists = await fs.exists(settingsJsonPath);
+  if (!settingsExists) {
     console.error(`error: ${contentTypeName}.settings.json does not exist`);
     return;
   }
@@ -57,6 +57,30 @@ const convertModelToContentType = async (apiPath, contentTypeName) => {
       `error: an error occured when migrating the model at ${settingsJsonPath} to a contentType at ${v4SchemaJsonPath} `
     );
   }
+
+  const lifecyclePath = join(apiPath, "models", `${contentTypeName}.js`);
+  const lifecyclesExist = await fs.exists(lifecyclePath);
+
+  const v4LifecyclesPath = join(
+    apiPath,
+    "content-types",
+    contentTypeName,
+    "lifecycle.js"
+  );
+
+  if (lifecyclesExist) {
+    try {
+      await fs.move(lifecyclePath, v4LifecyclesPath);
+    } catch (error) {
+      console.error(
+        `error: failed to migrate lifecycles from ${lifecyclePath} to ${v4LifecyclesPath}`
+      );
+    }
+  } else {
+    console.log(
+      `info: will not create lifecycles since ${contentTypeName}.js was not found`
+    );
+  }
 };
 
 /**
@@ -64,6 +88,9 @@ const convertModelToContentType = async (apiPath, contentTypeName) => {
  * @param {string} apiPath Path to the current API
  */
 const updateContentTypes = async (apiPath) => {
+  const exists = await fs.exists(join(apiPath, "models"))
+  if (!exists) return
+
   const allModels = await fs.readdir(join(apiPath, "models"), {
     withFileTypes: true,
   });
