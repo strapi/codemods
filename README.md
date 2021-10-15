@@ -1,105 +1,50 @@
-# Codemod Readme
+![Codemod](./preview.png)
 
-This repo offers scripts to help migrate Strapi applications and plugins from v3 to v4
+# Codemod
 
-To use the scripts, clone this repo and run all commands from the root.
+> CLI to help you migrate your Strapi applications & plugins from v3 to v4.
 
-## Migration helpers
+## Features
 
-### update-plugin-folder-structure
+- Migrate whole project structure
+- Switch to the latest strapi v4 dependencies
+- Migrate each plugin you want to follow latest v4 plugin guideline
 
-Organizes v3 Strapi plugin into an acceptable v4 Strapi plugin file structure
+## Getting started
 
-`pathToV3Plugin`: _required_
-
-`pathForV4Plugin`: _defaults to:_ `<pathToV3Plugin>-v4`
-
-```bash
-node ./migrations-helpers/upate-plugin-folder-structure <pathToV3Plugin> [pathForV4Plugin]
-```
-
-### update-api-folder-structure
-
-Organizes a v3 Strapi app into the new v4 Strapi app file structure
-
-`pathToStrapiApp`: _required_
+### ⏳ Installation
 
 ```bash
-node ./migration-helpers/update-api-folder-structure <pathToStrapiApp>
+yarn add codemod
 ```
 
-### update-package-dependencies
-
-Updates all Strapi dependencies found in a v3 Strapi app or plugin
-
-`pathToStrapiApp`: _required_
+**or**
 
 ```bash
-node ./migration-helpers/update-package-dependencies <pathToStrapiApp>
+npm install --save codemod
 ```
 
-## Transforms
-
-You can install `jscodeshift` globally or use npx. See jscodeshift docs for all available options: [https://github.com/facebook/jscodeshift](https://github.com/facebook/jscodeshift)
-
-The commands provided below will make changes to your source code
+### 🖐 Requirements
 
 Before running any commands, be sure you have initialized a git repository, the working tree is clean, you've pushed your code to GitHub, and you are on a new branch.
 
-Example jscodehsift command:
+### 🕹 Usage
 
 ```bash
-npx jscodeshift -t <path-to-transform> <path-to-file(s)-or-folder>
+yarn codemod migrate
 ```
-
-### change-find-to-findMany
-
-`.query().find()` => `.query().findMany()`
-
+OR
 ```bash
-npx jscodeshift -t ./transforms/change-find-to-findMany.js <path-to-file(s)-or-folder>
+npx codemod migrate
 ```
 
-### update-strapi-scoped-imports
+The prompt will ask you 3 things:
 
-`strapi-some-package` => `@strapi/some-package`
+1. First, you have to chose what do you want to migrate:
+  - `Project` (folder structure + dependencies)
+  - `Dependencies` (Only dump dependencies to the latest v4 release)
+  - `Plugin` (give you the ability to migrate the folder structure of a specific plugin)
+3. Then, where is your Strapi application folder (default: `./`).
+4. Finally, if you chose to migrate a plugin it will ask for the plugin's name.
 
-```bash
-npx jscodeshift -t ./codemods/transforms/update-strapi-scoped-imports.js  <path-to-file(s)-or-folder>
-```
-
-### change-model-getters-to-content-types
-
-`.models` => `.contentTypes`
-
-```bash
-npx jscodeshift -t ./transforms/change-model-getters-to-content-types.js <path-to-file(s)-or-folder>
-```
-
-### update-top-level-plugin-getter
-
-`strapi.plugins['some-plugin']` => `strapi.plugin('some-plugin')`
-
-```bash
-npx jscodeshift -t ./transforms/update-top-level-getters.js <path-to-file(s)-or-folder>
-```
-
-### use-plugin-getters
-
-`strapi.plugin('some-plugin').controllers['some-controller']` => `strapi.plugin('some-plugin').controller('some-controller')`
-
-```bash
-npx jscodeshift -t ./transforms/use-plugin-getters.js <path-to-file(s)-or-folder>
-```
-
-### use-arrow-function-for-service-export
-
-```bash
-npx jscodeshift -t ./transforms/use-arrow-function-for-service-export.js <path-to-file(s)-or-folder>
-```
-
-### add-strapi-to-bootstrap-params
-
-```bash
-npx jscodeshift -t ./transforms/add-strapi-to-bootstrap-params.js <path-to-file(s)-or-folder>
-```
+Enjoy 🎉
