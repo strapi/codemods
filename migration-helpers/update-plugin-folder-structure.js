@@ -30,12 +30,18 @@ async function migratePlugin(v3PluginPath, v4DestinationPath) {
 
     // Create root strapi-admin
     const strapiAdmin = join(v4Plugin, `strapi-admin.js`);
-    await fs.copy("./utils/strapi-admin.js", strapiAdmin);
+    await fs.copy(
+      join(__dirname, "..", "utils", "strapi-admin.js"),
+      strapiAdmin
+    );
     console.log(`created ${strapiAdmin}`);
 
     // Create root strapi-server
     const strapiServer = join(v4Plugin, `strapi-server.js`);
-    await fs.copy("./utils/strapi-server.js", strapiServer);
+    await fs.copy(
+      join(__dirname, "..", "utils", "strapi-server.js"),
+      strapiServer
+    );
     console.log(`created ${strapiServer}`);
 
     // Move all server files to /server
