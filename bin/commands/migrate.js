@@ -35,7 +35,7 @@ const promptOptions = [
 ];
 
 // Plugin migration prompt's configuration
-const pluginMigrationPrompt = (scope) => {
+const pluginMigrationPrompt = () => {
   return [
     {
       type: "input",
