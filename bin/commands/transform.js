@@ -1,18 +1,48 @@
+// Node.js core.
+const { join } = require("path");
+
 // jscodeshift engine
 const jscodeshift = require("jscodeshift/dist/Runner");
 
 // Enquirer engine.
 const { prompt } = require("enquirer");
 
-// Transform files
-const { changeFindToFindManyFile } = require("../../lib/transforms");
-
+/**
+ * Prompt's configuration
+ * choices array value have to be name of transform file
+ */
 const promptOptions = [
   {
     type: "select",
     name: "type",
     message: "What kind of transformation do you want to perform?",
-    choices: [{ name: "find -> findMany", value: "change-find-to-findMany" }],
+    choices: [
+      { name: "find -> findMany", value: "change-find-to-findMany" },
+      {
+        name: "strapi-some-package -> @strapi/some-package",
+        value: "update-strapi-scoped-imports",
+      },
+      {
+        name: ".models -> .contentTypes",
+        value: "change-model-getters-to-content-types",
+      },
+      {
+        name: "strapi.plugins['some-plugin'] -> strapi.plugin('some-plugin')",
+        value: "use-plugin-getters",
+      },
+      {
+        name: "strapi.plugin('some-plugin').controllers['some-controller'] -> strapi.plugin('some-plugin').controller('some-controller')",
+        value: "update-top-level-plugin-getter",
+      },
+      {
+        name: "Add arrow function for service export",
+        value: "use-arrow-function-for-service-export",
+      },
+      {
+        name: "Add strapi to bootstrap function params",
+        value: "add-strapi-to-bootstrap-params",
+      },
+    ],
     result() {
       return this.focused.value;
     },
@@ -25,12 +55,18 @@ const promptOptions = [
 ];
 
 const transform = async () => {
-  const options = await prompt(promptOptions);
+  try {
+    const options = await prompt(promptOptions);
 
-  switch (options.type) {
-    case "change-find-to-findMany":
-      await jscodeshift.run(changeFindToFindManyFile, [options.path], {});
-      break;
+    // execute jscodeshift's Runner
+    jscodeshift.run(
+      join(__dirname, "../../lib/transforms", `${options.type}.js`),
+      [options.path],
+      {}
+    );
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
   }
 };
 
