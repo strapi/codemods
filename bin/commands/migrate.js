@@ -5,11 +5,9 @@ const { join } = require("path");
 const { prompt } = require("enquirer");
 
 // Migration Helpers
-const {
-  migratePlugin,
-  migrateApiFolder,
-  migrateDependencies,
-} = require("../../lib/migration-helpers");
+const { v4 } = require("../../lib");
+const { migratePlugin, migrateApiFolder, migrateDependencies } =
+  v4.migrationHelpers;
 
 // Prompt's configuration
 const promptOptions = [

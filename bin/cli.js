@@ -21,7 +21,7 @@ program
 // `$ codemods generate`
 program
   .command("migrate")
-  .description("migrate Strapi applications from v3 to v4")
+  .description("Migrate Strapi applications from v3 to v4")
   .action(async () => {
     await migrate();
   });
@@ -29,7 +29,7 @@ program
 // `$ codemods transform`
 program
   .command("transform")
-  .description("transform your code to follow v4 requirement")
+  .description("Transform your code to follow v4 requirement")
   .action(async () => {
     await transform();
   });

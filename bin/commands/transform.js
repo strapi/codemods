@@ -60,7 +60,7 @@ const transform = async () => {
 
     // execute jscodeshift's Runner
     jscodeshift.run(
-      join(__dirname, "../../lib/transforms", `${options.type}.js`),
+      join(__dirname, "../../lib/v4/transforms", `${options.type}.js`),
       [options.path],
       {}
     );

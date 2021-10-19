@@ -1,4 +1,4 @@
-# Codemod Readme
+# @strapi/codemods Readme
 
 This repo offers scripts to help migrate Strapi applications and plugins from v3 to v4
 

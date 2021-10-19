@@ -1,6 +1,6 @@
-![Codemod](./preview.png)
+![@strapi/codemods](./preview.png)
 
-# Codemod
+# @strapi/codemods
 
 > CLI to help you migrate your Strapi applications & plugins from v3 to v4.
 
@@ -15,13 +15,13 @@
 ### ⏳ Installation
 
 ```bash
-yarn add codemod
+yarn add @strapi/codemods
 ```
 
 **or**
 
 ```bash
-npm install --save codemod
+npm install --save @strapi/codemods
 ```
 
 ### 🖐 Requirements
@@ -30,12 +30,14 @@ Before running any commands, be sure you have initialized a git repository, the 
 
 ### 🕹 Usage
 
+#### Migrate
+
 ```bash
-yarn codemod migrate
+yarn codemods migrate
 ```
 OR
 ```bash
-npx codemod migrate
+npx codemods migrate
 ```
 
 The prompt will ask you 3 things:
