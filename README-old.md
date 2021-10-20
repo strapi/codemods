@@ -15,7 +15,7 @@ Organizes v3 Strapi plugin into an acceptable v4 Strapi plugin file structure
 `pathForV4Plugin`: _defaults to:_ `<pathToV3Plugin>-v4`
 
 ```bash
-node ./migrations-helpers/upate-plugin-folder-structure <pathToV3Plugin> [pathForV4Plugin]
+node ./migration-helpers/update-plugin-folder-structure <pathToV3Plugin> [pathForV4Plugin]
 ```
 
 ### update-api-folder-structure
