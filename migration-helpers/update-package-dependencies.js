@@ -7,8 +7,8 @@ const axios = require("axios");
 const { strapiPackages, toBeDeleted } = require("../utils/strapi-packages");
 
 async function getLatestStrapiVersion() {
-  const response = await axios.get(`https://api.npms.io/v2/package/${encodeURIComponent('@strapi/strapi')}`);
-  return response.data.collected.metadata.version;
+  const response = await axios.get(`https://registry.npmjs.org/${encodeURIComponent("@strapi/strapi")}`);
+  return response.data["dist-tags"].latest;
 }
 
 async function updatePackageDependencies(appPath) {
