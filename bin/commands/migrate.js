@@ -33,17 +33,15 @@ const promptOptions = [
 ];
 
 // Plugin migration prompt's configuration
-const pluginMigrationPrompt = () => {
-  return [
-    {
-      type: "input",
-      name: "name",
-      message: "Provide the name of the plugin you want to migrate",
-    },
-  ];
-};
+const pluginMigrationPromptOptions = [
+  {
+    type: "input",
+    name: "name",
+    message: "Provide the name of the plugin you want to migrate",
+  },
+];
 
-// `codemods migrate`
+// `strapi-codemods migrate`
 const migrate = async () => {
   try {
     const options = await prompt(promptOptions);
@@ -58,7 +56,7 @@ const migrate = async () => {
         break;
       case "plugin":
         // start plugin prompt
-        const pluginOptions = await prompt(pluginMigrationPrompt(options));
+        const pluginOptions = await prompt(pluginMigrationPromptOptions);
 
         options.pathToV3Plugin = join(
           options.pathToStrapiApp,

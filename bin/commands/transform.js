@@ -7,6 +7,10 @@ const jscodeshift = require("jscodeshift/dist/Runner");
 // Enquirer engine.
 const { prompt } = require("enquirer");
 
+// global utils
+const { utils } = require("../../lib/global");
+const { formatCode } = utils;
+
 /**
  * Prompt's configuration
  * choices array value have to be name of transform file
@@ -54,6 +58,7 @@ const promptOptions = [
   },
 ];
 
+// `strapi-codemods transform`
 const transform = async () => {
   try {
     const options = await prompt(promptOptions);
@@ -64,6 +69,9 @@ const transform = async () => {
       [options.path],
       {}
     );
+
+    // format code with prettier
+    await formatCode(options.path);
   } catch (error) {
     console.error(error);
     process.exit(1);
