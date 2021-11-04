@@ -13,7 +13,7 @@ const { formatCode } = utils;
 
 /**
  * Prompt's configuration
- * choices array value have to be name of transform file
+ * choices array value have to be the name of transform file
  */
 const promptOptions = [
   {

@@ -1,6 +1,3 @@
-// Node.js core.
-const { join } = require("path");
-
 // Enquirer engine.
 const { prompt } = require("enquirer");
 
@@ -26,58 +23,68 @@ const promptOptions = [
   },
   {
     type: "input",
-    name: "pathToStrapiApp",
-    message: "Enter the path to your Strapi application",
+    name: "path",
+    message: ({ answers }) => {
+      return answers.type === "plugin"
+        ? "Enter the path to your Strapi plugin"
+        : "Enter the path to your Strapi application";
+    },
     initial: "./",
   },
 ];
 
-// Plugin migration prompt's configuration
-const pluginMigrationPromptOptions = [
-  {
-    type: "input",
-    name: "name",
-    message: "Provide the name of the plugin you want to migrate",
-  },
-];
+const pluginPromptOptions = (pathToV3) => {
+  return [
+    {
+      type: "input",
+      name: "pathForV4",
+      message: "Where would you like to create your v4 plugin?",
+      initial: `${pathToV3}-v4`,
+    },
+  ];
+};
+
+const migrateWithFlags = async (options) => {
+  if (options.project) {
+    await migrateApiFolder(options.project);
+    await migrateDependencies(options.project);
+  }
+  if (options.dependencies) {
+    await migrateDependencies(options.dependencies);
+  }
+  if (options.plugin) {
+    const pathForV4Plugin = `${options.plugin}-v4`;
+    await migratePlugin(options.plugin, pathForV4Plugin);
+  }
+};
 
 // `strapi-codemods migrate`
-const migrate = async () => {
+const migrate = async (options) => {
   try {
-    const options = await prompt(promptOptions);
+    // Use bypass in order to migrate & don't have the prompt
+    if (
+      options &&
+      (options.project || options.dependencies || options.plugin)
+    ) {
+      await migrateWithFlags(options);
+      process.exit(0);
+    }
 
-    switch (options.type) {
+    const response = await prompt(promptOptions);
+
+    switch (response.type) {
       case "project":
-        await migrateApiFolder(options.pathToStrapiApp);
-        await migrateDependencies(options.pathToStrapiApp);
+        await migrateApiFolder(response.path);
+        await migrateDependencies(response.path);
         break;
       case "dependencies":
-        await migrateDependencies(options.pathToStrapiApp);
+        await migrateDependencies(response.path);
         break;
       case "plugin":
-        // start plugin prompt
-        const pluginOptions = await prompt(pluginMigrationPromptOptions);
-
-        options.pathToV3Plugin = join(
-          options.pathToStrapiApp,
-          pluginOptions.name
-        );
-
-        // set path for plugin migration
-        const plugin = {
-          pathToV3: join(
-            options.pathToStrapiApp,
-            "plugins",
-            pluginOptions.name
-          ),
-          pathForV4: join(
-            options.pathToStrapiApp,
-            "plugins",
-            `${pluginOptions.name}-v4`
-          ),
-        };
-
-        await migratePlugin(plugin.pathToV3, plugin.pathForV4);
+        const pluginResponse = await prompt(pluginPromptOptions(response.path));
+        console.log(pluginResponse);
+        const pathForV4Plugin = `${response.path}-v4`;
+        await migratePlugin(response.path, pluginResponse.pathForV4);
         break;
     }
     process.exit(0);

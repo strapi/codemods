@@ -9,10 +9,14 @@ const { defaultCommand, migrate, transform } = require("./commands");
 const program = new Command();
 
 // `$ strapi-codemods version || strapi-codemods -v || strapi-codemods --version`
-program.version(version, "-v, --version", "Output the version number");
+program.version(
+  version,
+  "-v, --version",
+  "Output your version of @strapi/codemods"
+);
 program
   .command("version")
-  .description("Output your version of Codemods")
+  .description("Output your version of @strapi/codemods")
   .action(() => {
     process.stdout.write(version + "\n");
     process.exit(0);
@@ -30,15 +34,18 @@ program
 // `$ strapi-codemods migrate`
 program
   .command("migrate")
-  .description("Migrate Strapi applications from v3 to v4")
-  .action(async () => {
-    await migrate();
+  .option("--project <path>", "directly trigger project migration")
+  .option("--dependencies <path>", "migrate your dependencies to v4")
+  .option("--plugin <path>", "migrate one of your plugin")
+  .description("Migrate a v3 Strapi application or plugin to v4")
+  .action(async (options) => {
+    await migrate(options);
   });
 
 // `$ strapi-codemods transform`
 program
   .command("transform")
-  .description("Transform your code to follow v4 requirement")
+  .description("Transform your v3 code to v4")
   .action(async () => {
     await transform();
   });
