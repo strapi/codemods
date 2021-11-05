@@ -1,3 +1,6 @@
+// Node.js core
+const { resolve } = require("path");
+
 // Enquirer engine.
 const { prompt } = require("enquirer");
 
@@ -53,7 +56,7 @@ const migrateWithFlags = async (options) => {
     await migrateDependencies(options.dependencies);
   }
   if (options.plugin) {
-    const pathForV4Plugin = `${options.plugin}-v4`;
+    const pathForV4Plugin = resolve(`${options.plugin}-v4`);
     await migratePlugin(options.plugin, pathForV4Plugin);
   }
 };
@@ -81,10 +84,10 @@ const migrate = async (options) => {
         await migrateDependencies(response.path);
         break;
       case "plugin":
-        const pluginResponse = await prompt(pluginPromptOptions(response.path));
-        console.log(pluginResponse);
-        const pathForV4Plugin = `${response.path}-v4`;
-        await migratePlugin(response.path, pluginResponse.pathForV4);
+        const pluginResponse = await prompt(
+          pluginPromptOptions(resolve(response.path))
+        );
+        await migratePlugin(response.path, resolve(pluginResponse.pathForV4));
         break;
     }
     process.exit(0);
