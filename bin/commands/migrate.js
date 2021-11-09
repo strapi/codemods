@@ -1,8 +1,9 @@
 // Node.js core
 const { resolve } = require("path");
 
-// Enquirer engine.
-const { prompt } = require("enquirer");
+// Inquirer engine.
+const { prompt, registerPrompt } = require("inquirer");
+registerPrompt("fuzzypath", require("inquirer-fuzzy-path"));
 
 // Migration Helpers
 const { v4 } = require("../../lib");
@@ -12,7 +13,7 @@ const { migratePlugin, migrateApiFolder, migrateDependencies } =
 // Prompt's configuration
 const promptOptions = [
   {
-    type: "select",
+    type: "list",
     name: "type",
     message: "What do you want to migrate?",
     choices: [
@@ -20,29 +21,54 @@ const promptOptions = [
       { name: "Only Dependencies", value: "dependencies" },
       { name: "Plugin", value: "plugin" },
     ],
-    result() {
-      return this.focused.value;
-    },
   },
   {
-    type: "input",
+    type: "fuzzypath",
     name: "path",
-    message: ({ answers }) => {
-      return answers.type === "plugin"
+    message: (answer) => {
+      return answer.type === "plugin"
         ? "Enter the path to your Strapi plugin"
         : "Enter the path to your Strapi application";
     },
-    initial: "./",
+    excludePath: (nodePath) =>
+      nodePath.includes("node_modules") ||
+      nodePath.includes(".git") ||
+      nodePath.includes(".cache") ||
+      nodePath.includes(".tmp") ||
+      nodePath.includes("build"),
+    excludeFilter: (nodePath) =>
+      nodePath.includes("node_modules") ||
+      nodePath.includes(".git") ||
+      nodePath.includes(".cache") ||
+      nodePath.includes(".tmp") ||
+      nodePath.includes("build"),
+    suggestOnly: false,
+    itemType: "any",
   },
 ];
 
 const pluginPromptOptions = (pathToV3) => {
   return [
     {
-      type: "input",
+      type: "fuzzypath",
       name: "pathForV4",
       message: "Where would you like to create your v4 plugin?",
-      initial: `${pathToV3}-v4`,
+      excludePath: (nodePath) =>
+        nodePath.includes("node_modules") ||
+        nodePath.includes(".git") ||
+        nodePath.includes(".cache") ||
+        nodePath.includes(".tmp") ||
+        nodePath.includes("build"),
+      excludeFilter: (nodePath) =>
+        nodePath.includes("node_modules") ||
+        nodePath.includes(".git") ||
+        nodePath.includes(".cache") ||
+        nodePath.includes(".tmp") ||
+        nodePath.includes("build"),
+      suggestOnly: false,
+      itemType: "any",
+      rootPath: ".",
+      default: `${pathToV3}-v4`,
     },
   ];
 };

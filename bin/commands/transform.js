@@ -4,8 +4,9 @@ const { join } = require("path");
 // jscodeshift engine
 const jscodeshift = require("jscodeshift/dist/Runner");
 
-// Enquirer engine.
-const { prompt } = require("enquirer");
+// Inquirer engine.
+const { prompt, registerPrompt } = require("inquirer");
+registerPrompt("fuzzypath", require("inquirer-fuzzy-path"));
 
 // global utils
 const { utils } = require("../../lib/global");
@@ -17,7 +18,7 @@ const { formatCode } = utils;
  */
 const promptOptions = [
   {
-    type: "select",
+    type: "list",
     name: "type",
     message: "What kind of transformation do you want to perform?",
     choices: [
@@ -47,14 +48,25 @@ const promptOptions = [
         value: "add-strapi-to-bootstrap-params",
       },
     ],
-    result() {
-      return this.focused.value;
-    },
   },
   {
-    type: "input",
+    type: "fuzzypath",
     name: "path",
     message: "Enter the path to file(s) or folder to transform",
+    excludePath: (nodePath) =>
+      nodePath.includes("node_modules") ||
+      nodePath.includes(".git") ||
+      nodePath.includes(".cache") ||
+      nodePath.includes(".tmp") ||
+      nodePath.includes("build"),
+    excludeFilter: (nodePath) =>
+      nodePath.includes("node_modules") ||
+      nodePath.includes(".git") ||
+      nodePath.includes(".cache") ||
+      nodePath.includes(".tmp") ||
+      nodePath.includes("build"),
+    suggestOnly: false,
+    itemType: "any",
   },
 ];
 

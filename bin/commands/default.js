@@ -1,5 +1,5 @@
-// Enquirer engine.
-const { prompt } = require("enquirer");
+// Inquirer engine.
+const { prompt } = require("inquirer");
 
 // Commands
 const migrate = require("./migrate");
@@ -8,16 +8,13 @@ const transform = require("./transform");
 // Prompt's configuration
 const promptOptions = [
   {
-    type: "select",
+    type: "list",
     name: "type",
     message: "What would you like to do?",
     choices: [
       { name: "Migrate", value: "migrate" },
       { name: "Transform", value: "transform" },
     ],
-    result() {
-      return this.focused.value;
-    },
   },
 ];
 
