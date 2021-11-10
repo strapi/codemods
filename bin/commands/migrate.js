@@ -10,6 +10,21 @@ const { v4 } = require("../../lib");
 const { migratePlugin, migrateApiFolder, migrateDependencies } =
   v4.migrationHelpers;
 
+const fuzzyPathOptions = {
+  type: "fuzzypath",
+  excludePath: (nodePath) =>
+    nodePath.includes("node_modules") ||
+    nodePath.includes("build") ||
+    nodePath.match(/(?<=\/)\./),
+  excludeFilter: (nodePath) =>
+    nodePath.includes("node_modules") ||
+    nodePath.includes("build") ||
+    nodePath.match(/(?<=\/)\./),
+  suggestOnly: false,
+  itemType: "directory",
+  depthLimit: 2,
+};
+
 // Prompt's configuration
 const promptOptions = [
   {
@@ -23,51 +38,22 @@ const promptOptions = [
     ],
   },
   {
-    type: "fuzzypath",
+    ...fuzzyPathOptions,
     name: "path",
     message: (answer) => {
       return answer.type === "plugin"
         ? "Enter the path to your Strapi plugin"
         : "Enter the path to your Strapi application";
     },
-    excludePath: (nodePath) =>
-      nodePath.includes("node_modules") ||
-      nodePath.includes(".git") ||
-      nodePath.includes(".cache") ||
-      nodePath.includes(".tmp") ||
-      nodePath.includes("build"),
-    excludeFilter: (nodePath) =>
-      nodePath.includes("node_modules") ||
-      nodePath.includes(".git") ||
-      nodePath.includes(".cache") ||
-      nodePath.includes(".tmp") ||
-      nodePath.includes("build"),
-    suggestOnly: false,
-    itemType: "any",
   },
 ];
 
 const pluginPromptOptions = (pathToV3) => {
   return [
     {
-      type: "fuzzypath",
+      ...fuzzyPathOptions,
       name: "pathForV4",
       message: "Where would you like to create your v4 plugin?",
-      excludePath: (nodePath) =>
-        nodePath.includes("node_modules") ||
-        nodePath.includes(".git") ||
-        nodePath.includes(".cache") ||
-        nodePath.includes(".tmp") ||
-        nodePath.includes("build"),
-      excludeFilter: (nodePath) =>
-        nodePath.includes("node_modules") ||
-        nodePath.includes(".git") ||
-        nodePath.includes(".cache") ||
-        nodePath.includes(".tmp") ||
-        nodePath.includes("build"),
-      suggestOnly: false,
-      itemType: "any",
-      rootPath: ".",
       default: `${pathToV3}-v4`,
     },
   ];

@@ -23,7 +23,8 @@
     "inquirer-fuzzy-path": "^2.3.0",
     "jscodeshift": "^0.11.0",
     "lodash": "^4.17.21",
-    "pluralize": "^8.0.0"
+    "pluralize": "^8.0.0",
+    "prettier": "^2.4.1"
   },
   "devDependencies": {
     "jest": "^27.0.6"

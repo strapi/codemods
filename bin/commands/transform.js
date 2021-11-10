@@ -12,6 +12,19 @@ registerPrompt("fuzzypath", require("inquirer-fuzzy-path"));
 const { utils } = require("../../lib/global");
 const { formatCode } = utils;
 
+const fuzzyPathOptions = {
+  type: "fuzzypath",
+  excludePath: (nodePath) =>
+    nodePath.includes("node_modules") ||
+    nodePath.includes("build") ||
+    nodePath.match(/(?<=\/)\./),
+  excludeFilter: (nodePath) =>
+    nodePath.includes("node_modules") ||
+    nodePath.includes("build") ||
+    nodePath.match(/(?<=\/)\./),
+  suggestOnly: false,
+};
+
 /**
  * Prompt's configuration
  * choices array value have to be the name of transform file
@@ -50,22 +63,13 @@ const promptOptions = [
     ],
   },
   {
-    type: "fuzzypath",
+    ...fuzzyPathOptions,
     name: "path",
-    message: "Enter the path to file(s) or folder to transform",
-    excludePath: (nodePath) =>
-      nodePath.includes("node_modules") ||
-      nodePath.includes(".git") ||
-      nodePath.includes(".cache") ||
-      nodePath.includes(".tmp") ||
-      nodePath.includes("build"),
-    excludeFilter: (nodePath) =>
-      nodePath.includes("node_modules") ||
-      nodePath.includes(".git") ||
-      nodePath.includes(".cache") ||
-      nodePath.includes(".tmp") ||
-      nodePath.includes("build"),
-    suggestOnly: false,
+    message: (answer) => {
+      return answer.type === "use-arrow-function-for-service-export"
+        ? "Enter the path to service(s) file(s)/folder"
+        : "Enter the path to file(s) or folder to transform";
+    },
     itemType: "any",
   },
 ];
