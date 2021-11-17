@@ -2,28 +2,16 @@
 const { resolve } = require("path");
 
 // Inquirer engine.
-const { prompt, registerPrompt } = require("inquirer");
-registerPrompt("fuzzypath", require("inquirer-fuzzy-path"));
+const { prompt } = require("inquirer");
 
 // Migration Helpers
 const { v4 } = require("../../lib");
 const { migratePlugin, migrateApiFolder, migrateDependencies } =
   v4.migrationHelpers;
 
-const fuzzyPathOptions = {
-  type: "fuzzypath",
-  excludePath: (nodePath) =>
-    nodePath.includes("node_modules") ||
-    nodePath.includes("build") ||
-    nodePath.match(/(?<=\/)\./),
-  excludeFilter: (nodePath) =>
-    nodePath.includes("node_modules") ||
-    nodePath.includes("build") ||
-    nodePath.match(/(?<=\/)\./),
-  suggestOnly: false,
-  itemType: "directory",
-  depthLimit: 2,
-};
+// Global utils
+const { utils } = require("../../lib/global");
+const { isPathStrapiApp } = utils;
 
 // Prompt's configuration
 const promptOptions = [
@@ -38,7 +26,7 @@ const promptOptions = [
     ],
   },
   {
-    ...fuzzyPathOptions,
+    type: "input",
     name: "path",
     message: (answer) => {
       return answer.type === "plugin"
@@ -51,7 +39,7 @@ const promptOptions = [
 const pluginPromptOptions = (pathToV3) => {
   return [
     {
-      ...fuzzyPathOptions,
+      type: "input",
       name: "pathForV4",
       message: "Where would you like to create your v4 plugin?",
       default: `${pathToV3}-v4`,
@@ -59,47 +47,74 @@ const pluginPromptOptions = (pathToV3) => {
   ];
 };
 
+const checkIsValidPath = async (path) => {
+  const options = [
+    {
+      type: "input",
+      name: "path",
+      message:
+        "The specified path is not a Strapi application. Please provide a correct one",
+    },
+  ];
+
+  if (!isPathStrapiApp(path)) {
+    const response = await prompt(options);
+
+    // Give a last chance to specify a valid Strapi application
+    if (!isPathStrapiApp(response.path)) {
+      console.error("It is still not a Strapi application...");
+      process.exit(1);
+    }
+    return response.path;
+  }
+  return path;
+};
+
 const migrateWithFlags = async (options) => {
   if (options.project) {
-    await migrateApiFolder(options.project);
-    await migrateDependencies(options.project);
+    const path = await checkIsValidPath(options.project);
+    await migrateApiFolder(path);
+    await migrateDependencies(path);
   }
   if (options.dependencies) {
-    await migrateDependencies(options.dependencies);
+    const path = await checkIsValidPath(options.dependencies);
+    await migrateDependencies(path);
   }
   if (options.plugin) {
     const pathForV4Plugin = resolve(`${options.plugin}-v4`);
     await migratePlugin(options.plugin, pathForV4Plugin);
   }
+  process.exit(0);
 };
 
 // `strapi-codemods migrate`
 const migrate = async (options) => {
   try {
-    // Use bypass in order to migrate & don't have the prompt
+    // Use flags to bypass prompts
     if (
       options &&
       (options.project || options.dependencies || options.plugin)
     ) {
       await migrateWithFlags(options);
-      process.exit(0);
     }
 
     const response = await prompt(promptOptions);
 
+    let path;
     switch (response.type) {
       case "project":
-        await migrateApiFolder(response.path);
-        await migrateDependencies(response.path);
+        path = await checkIsValidPath(response.path);
+        await migrateApiFolder(path);
+        await migrateDependencies(path);
         break;
       case "dependencies":
-        await migrateDependencies(response.path);
+        path = await checkIsValidPath(response.path);
+        await migrateDependencies(path);
         break;
       case "plugin":
-        const pluginResponse = await prompt(
-          pluginPromptOptions(resolve(response.path))
-        );
-        await migratePlugin(response.path, resolve(pluginResponse.pathForV4));
+        path = response.path;
+        const pluginResponse = await prompt(pluginPromptOptions(resolve(path)));
+        await migratePlugin(path, resolve(pluginResponse.pathForV4));
         break;
     }
     process.exit(0);
