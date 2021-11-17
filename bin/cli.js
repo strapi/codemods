@@ -3,7 +3,14 @@
 
 const { Command } = require("commander");
 const { version } = require("../package.json");
-const { defaultCommand, migrate, transform } = require("./commands");
+const {
+  defaultCommand,
+  migrate,
+  migrateApplicationToV4,
+  migrateDependenciesToV4,
+  migratePluginToV4,
+  transform,
+} = require("./commands");
 
 // Initial program setup
 const program = new Command();
@@ -34,18 +41,39 @@ program
 // `$ strapi-codemods migrate`
 program
   .command("migrate")
-  .option("--project <path>", "directly trigger project migration")
-  .option("--dependencies <path>", "migrate your dependencies to v4")
-  .option("--plugin <path>", "migrate one of your plugin")
   .description("Migrate a v3 Strapi application or plugin to v4")
-  .action(async (options) => {
-    await migrate(options);
+  .action(async () => {
+    await migrate();
+  });
+
+// `$ strapi-codemods migrate:application`
+program
+  .command("migrate:application [path]")
+  .description("Migrate a v3 Strapi application to v4")
+  .action(async (path) => {
+    await migrateApplicationToV4(path);
+  });
+
+// `$ strapi-codemods migrate:plugin`
+program
+  .command("migrate:plugin [path] [pathForV4]")
+  .description("Migrate a v3 dependencies to v4")
+  .action(async (path, pathForV4) => {
+    await migratePluginToV4(path, pathForV4);
+  });
+
+// `$ strapi-codemods migrate:dependencies`
+program
+  .command("migrate:dependencies [path]")
+  .description("Migrate a v3 Strapi plugin to v4")
+  .action(async (path) => {
+    await migrateDependenciesToV4(path);
   });
 
 // `$ strapi-codemods transform`
 program
   .command("transform")
-  .description("Transform your v3 code to v4")
+  .description("Transform v3 code in your v4 project")
   .action(async () => {
     await transform();
   });

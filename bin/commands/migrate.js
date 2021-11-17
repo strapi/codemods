@@ -10,19 +10,18 @@ const { migratePlugin, migrateApiFolder, migrateDependencies } =
   v4.migrationHelpers;
 
 // Global utils
-const { utils } = require("../../lib/global");
-const { isPathStrapiApp } = utils;
+const { isPathStrapiApp, logger } = require("../../lib/global/utils");
 
 // Prompt's configuration
-const promptOptions = [
+const defaultPromptOptions = [
   {
     type: "list",
     name: "type",
     message: "What do you want to migrate?",
     choices: [
-      { name: "Project", value: "project" },
-      { name: "Only Dependencies", value: "dependencies" },
+      { name: "Application", value: "application" },
       { name: "Plugin", value: "plugin" },
+      { name: "Only Dependencies", value: "dependencies" },
     ],
   },
   {
@@ -47,81 +46,104 @@ const pluginPromptOptions = (pathToV3) => {
   ];
 };
 
-const checkIsValidPath = async (path) => {
-  const options = [
-    {
-      type: "input",
-      name: "path",
-      message:
-        "The specified path is not a Strapi application. Please provide a correct one",
-    },
-  ];
-
+const checkIsValidPath = (path) => {
   if (!isPathStrapiApp(path)) {
-    const response = await prompt(options);
+    logger.error(
+      "The specified path is not a Strapi project. Please check the path and try again."
+    );
 
-    // Give a last chance to specify a valid Strapi application
-    if (!isPathStrapiApp(response.path)) {
-      console.error("It is still not a Strapi application...");
-      process.exit(1);
-    }
-    return response.path;
-  }
-  return path;
-};
-
-const migrateWithFlags = async (options) => {
-  if (options.project) {
-    const path = await checkIsValidPath(options.project);
-    await migrateApiFolder(path);
-    await migrateDependencies(path);
-  }
-  if (options.dependencies) {
-    const path = await checkIsValidPath(options.dependencies);
-    await migrateDependencies(path);
-  }
-  if (options.plugin) {
-    const pathForV4Plugin = resolve(`${options.plugin}-v4`);
-    await migratePlugin(options.plugin, pathForV4Plugin);
-  }
-  process.exit(0);
-};
-
-// `strapi-codemods migrate`
-const migrate = async (options) => {
-  try {
-    // Use flags to bypass prompts
-    if (
-      options &&
-      (options.project || options.dependencies || options.plugin)
-    ) {
-      await migrateWithFlags(options);
-    }
-
-    const response = await prompt(promptOptions);
-
-    let path;
-    switch (response.type) {
-      case "project":
-        path = await checkIsValidPath(response.path);
-        await migrateApiFolder(path);
-        await migrateDependencies(path);
-        break;
-      case "dependencies":
-        path = await checkIsValidPath(response.path);
-        await migrateDependencies(path);
-        break;
-      case "plugin":
-        path = response.path;
-        const pluginResponse = await prompt(pluginPromptOptions(resolve(path)));
-        await migratePlugin(path, resolve(pluginResponse.pathForV4));
-        break;
-    }
-    process.exit(0);
-  } catch (error) {
-    console.error(error);
     process.exit(1);
   }
 };
 
-module.exports = migrate;
+// `strapi-codemods migrate`
+const migrate = async (options, type) => {
+  
+  const promptOptions = options || defaultPromptOptions
+  try {
+    const response = await prompt(promptOptions);
+    const migrationType = type || response.type
+    
+    switch (migrationType) {
+      case "application":
+        await checkIsValidPath(response.path);
+        await migrateApiFolder(response.path);
+        await migrateDependencies(response.path);
+        break;
+      case "dependencies":
+        await checkIsValidPath(response.path);
+        await migrateDependencies(response.path);
+        break;
+      case "plugin":
+        await checkIsValidPath(response.path);
+        const pluginResponse = await prompt(
+          pluginPromptOptions(resolve(response.path))
+        );
+        await migratePlugin(response.path, resolve(pluginResponse.pathForV4));
+        break;
+    }
+  } catch (error) {
+    logger.error(error.message);
+    process.exit(1);
+  }
+};
+
+// `strapi-codemods migrate:application`
+const migrateApplicationToV4 = async (path) => {
+  if (!path) {
+    const promptOptions = {
+      type: "input",
+      name: "path",
+      message: "Enter the path to your Strapi application",
+    };
+
+    return migrate(promptOptions, 'application');
+  }
+
+  await checkIsValidPath(path);
+  await migrateApiFolder(path);
+  await migrateDependencies(path);
+};
+
+// `strapi-codemods migrate:plugin`
+const migratePluginToV4 = async (path, pathForV4) => {
+  if (!path) {
+    const promptOptions = {
+      type: "input",
+      name: "path",
+      message: "Enter the path to your Strapi plugin",
+    };
+
+    return migrate(promptOptions, 'plugin');
+  }
+
+  await checkIsValidPath(path);
+  const pathForV4Plugin = pathForV4
+    ? resolve(pathForV4)
+    : resolve(`${path}-v4`);
+
+  await migratePlugin(path, pathForV4Plugin);
+};
+
+// `strapi-codemods migrate:dependencies`
+const migrateDependenciesToV4 = async (path) => {
+  if (!path) {
+    const promptOptions = {
+      type: "input",
+      name: "path",
+      message: "Enter the path to your Strapi application or plugin",
+    };
+
+    return migrate(promptOptions, 'dependencies');
+  }
+
+  await checkIsValidPath(path);
+  await migrateDependencies(path);
+};
+
+module.exports = {
+  migrate,
+  migrateApplicationToV4,
+  migratePluginToV4,
+  migrateDependenciesToV4,
+};

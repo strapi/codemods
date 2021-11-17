@@ -1,8 +1,5 @@
-// Node.js core.
-const { join } = require("path");
-
-// jscodeshift engine
-const jscodeshift = require("jscodeshift/dist/Runner");
+// jscodeshift executable
+const runJscodeshift = require("../../lib/v4/utils/run-jscodeshift");
 
 // Inquirer engine.
 const { prompt, registerPrompt } = require("inquirer");
@@ -10,6 +7,8 @@ registerPrompt("fuzzypath", require("inquirer-fuzzy-path"));
 
 // global utils
 const { utils } = require("../../lib/global");
+const { logger } = require("../../lib/global/utils");
+
 const { formatCode } = utils;
 
 const fuzzyPathOptions = {
@@ -80,16 +79,12 @@ const transform = async () => {
     const options = await prompt(promptOptions);
 
     // execute jscodeshift's Runner
-    jscodeshift.run(
-      join(__dirname, "../../lib/v4/transforms", `${options.type}.js`),
-      [options.path],
-      {}
-    );
+    runJscodeshift(options.path, options.type);
 
     // format code with prettier
     await formatCode(options.path);
   } catch (error) {
-    console.error(error);
+    logger.error(error.message);
     process.exit(1);
   }
 };

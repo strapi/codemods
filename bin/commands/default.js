@@ -2,7 +2,7 @@
 const { prompt } = require("inquirer");
 
 // Commands
-const migrate = require("./migrate");
+const { migrate } = require("./migrate");
 const transform = require("./transform");
 
 // Prompt's configuration
