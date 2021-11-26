@@ -16,11 +16,11 @@ const fuzzyPathOptions = {
   excludePath: (nodePath) =>
     nodePath.includes("node_modules") ||
     nodePath.includes("build") ||
-    nodePath.match(/(?<=\/)\./),
+    nodePath.match(/^\/?(?:\w+\/)*(\.\w+)/),
   excludeFilter: (nodePath) =>
     nodePath.includes("node_modules") ||
     nodePath.includes("build") ||
-    nodePath.match(/(?<=\/)\./),
+    nodePath.match(/^\/?(?:\w+\/)*(\.\w+)/),
   suggestOnly: false,
 };
 
