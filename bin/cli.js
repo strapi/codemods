@@ -2,7 +2,10 @@
 "use strict";
 
 const { Command } = require("commander");
+const { isCleanGitRepo } = require("../lib/global/utils");
+
 const { version } = require("../package.json");
+
 const {
   defaultCommand,
   migrate,
@@ -75,6 +78,7 @@ program
   .command("transform")
   .description("Transform v3 code in your v4 project")
   .action(async () => {
+    await isCleanGitRepo(process.cwd());
     await transform();
   });
 
