@@ -64,11 +64,7 @@ const promptOptions = [
   {
     ...fuzzyPathOptions,
     name: "path",
-    message: (answer) => {
-      return answer.type === "use-arrow-function-for-service-export"
-        ? "Enter the path to service(s) file(s)/folder"
-        : "Enter the path to file(s) or folder to transform";
-    },
+    message: "Enter the path to service(s) file(s)/folder",
     itemType: "any",
   },
 ];
