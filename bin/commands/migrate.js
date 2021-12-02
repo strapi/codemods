@@ -1,23 +1,18 @@
 // Node.js core
-const { resolve } = require("path");
+const { resolve } = require('path');
 
 // Migration Helpers
-const { v4 } = require("../../lib");
-const { migratePlugin, migrateApiFolder, migrateDependencies } =
-  v4.migrationHelpers;
+const { v4 } = require('../../lib');
+
+const { migratePlugin, migrateApiFolder, migrateDependencies } = v4.migrationHelpers;
 
 // Global utils
-const {
-  isPathStrapiApp,
-  logger,
-  isCleanGitRepo,
-  promptUser,
-} = require("../../lib/global/utils");
+const { isPathStrapiApp, logger, isCleanGitRepo, promptUser } = require('../../lib/global/utils');
 
 const checkIsValidPath = (path) => {
   if (!isPathStrapiApp(path)) {
     logger.error(
-      "The specified path is not a Strapi project. Please check the path and try again."
+      'The specified path is not a Strapi project. Please check the path and try again.'
     );
 
     process.exit(1);
@@ -27,13 +22,13 @@ const checkIsValidPath = (path) => {
 const migrate = async (type, path, pathForV4Plugin) => {
   try {
     switch (type) {
-      case "application":
+      case 'application':
         await migrateApplicationToV4(path);
         break;
-      case "dependencies":
+      case 'dependencies':
         await migrateDependenciesToV4(path);
         break;
-      case "plugin":
+      case 'plugin':
         await migratePluginToV4(path, pathForV4Plugin);
         break;
     }
@@ -46,9 +41,9 @@ const migrate = async (type, path, pathForV4Plugin) => {
 // `strapi-codemods migrate:application`
 const migrateApplicationToV4 = async (path) => {
   const promptOptions = {
-    type: "input",
-    name: "path",
-    message: "Enter the path to your Strapi application",
+    type: 'input',
+    name: 'path',
+    message: 'Enter the path to your Strapi application',
     when: !path,
   };
 
@@ -65,16 +60,16 @@ const migrateApplicationToV4 = async (path) => {
 const migratePluginToV4 = async (pathToV3, pathForV4Plugin) => {
   const promptOptions = [
     {
-      type: "input",
-      name: "path",
-      message: "Enter the path to your v3 Strapi plugin",
+      type: 'input',
+      name: 'path',
+      message: 'Enter the path to your v3 Strapi plugin',
       when: !pathToV3,
     },
     {
-      type: "input",
-      name: "pathForV4",
-      message: "Where would you like to create your v4 plugin?",
-      default: (answers) => {
+      type: 'input',
+      name: 'pathForV4',
+      message: 'Where would you like to create your v4 plugin?',
+      default(answers) {
         const path = pathToV3 || answers.pathToV3;
         return `${resolve(path)}-v4`;
       },
@@ -93,9 +88,9 @@ const migratePluginToV4 = async (pathToV3, pathForV4Plugin) => {
 // `strapi-codemods migrate:dependencies`
 const migrateDependenciesToV4 = async (path) => {
   const promptOptions = {
-    type: "input",
-    name: "path",
-    message: "Enter the path to your Strapi application or plugin",
+    type: 'input',
+    name: 'path',
+    message: 'Enter the path to your Strapi application or plugin',
     when: !path,
   };
 

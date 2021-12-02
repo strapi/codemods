@@ -32,12 +32,14 @@ Before running any commands, be sure you have initialized a git repository, the 
 
 #### Migrate
 
-*Usage with prompt*
+_Usage with prompt_
 
 ```bash
 yarn strapi-codemods migrate
 ```
+
 or
+
 ```bash
 npx strapi-codemods migrate
 ```
@@ -49,9 +51,9 @@ The prompt will ask you:
   - `Plugin` (migrate folder structure + dependencies)
   - `Dependencies` (on migrate dependencies)
 - Where is the project located? (default: `./`).
-- *(plugin only)* Where do you want to create the v4 plugin
+- _(plugin only)_ Where do you want to create the v4 plugin
 
-*Bypass the prompt*
+_Bypass the prompt_
 
 To bypass the prompts use one of the following commands:
 
@@ -77,7 +79,7 @@ yarn strapi-codemods migrate:dependencies <path>
 
 #### Transform
 
-:warning: *These command will modify your source code Before running any commands, be sure you have initialized a git repository, the working tree is clean, you've pushed your code to GitHub, and you are on a new branch.*
+:warning: _These command will modify your source code Before running any commands, be sure you have initialized a git repository, the working tree is clean, you've pushed your code to GitHub, and you are on a new branch._
 
 ```bash
 yarn strapi-codemods transform

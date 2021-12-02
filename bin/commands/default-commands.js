@@ -1,7 +1,7 @@
 // Inquirer engine.
-const { isCleanGitRepo, promptUser } = require("../../lib/global/utils");
-const migrate = require("./migrate")
-const transform = require("./transform")
+const { isCleanGitRepo, promptUser } = require('../../lib/global/utils');
+const migrate = require('./migrate');
+const transform = require('./transform');
 
 const defaultTransform = async () => {
   await isCleanGitRepo(process.cwd());
@@ -16,12 +16,12 @@ const defaultMigrate = async () => {
 // Prompt's configuration
 const promptOptions = [
   {
-    type: "list",
-    name: "type",
-    message: "What would you like to do?",
+    type: 'list',
+    name: 'type',
+    message: 'What would you like to do?',
     choices: [
-      { name: "Migrate", value: "migrate" },
-      { name: "Transform", value: "transform" },
+      { name: 'Migrate', value: 'migrate' },
+      { name: 'Transform', value: 'transform' },
     ],
   },
 ];
@@ -31,10 +31,10 @@ const defaultCommand = async () => {
     const options = await promptUser(promptOptions);
 
     switch (options.type) {
-      case "migrate":
+      case 'migrate':
         await defaultMigrate();
         break;
-      case "transform":
+      case 'transform':
         await defaultTransform();
         break;
     }
