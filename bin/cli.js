@@ -2,18 +2,15 @@
 "use strict";
 
 const { Command } = require("commander");
-const { isCleanGitRepo } = require("../lib/global/utils");
 
 const { version } = require("../package.json");
 
 const {
+  defaultMigrate,
+  defaultTransform,
   defaultCommand,
-  migrate,
-  migrateApplicationToV4,
-  migrateDependenciesToV4,
-  migratePluginToV4,
-  transform,
-} = require("./commands");
+} = require("./commands/default-commands");
+const migrate = require("./commands/migrate");
 
 // Initial program setup
 const program = new Command();
@@ -46,7 +43,7 @@ program
   .command("migrate")
   .description("Migrate a v3 Strapi application or plugin to v4")
   .action(async () => {
-    await migrate();
+    await defaultMigrate();
   });
 
 // `$ strapi-codemods migrate:application`
@@ -54,7 +51,7 @@ program
   .command("migrate:application [path]")
   .description("Migrate a v3 Strapi application to v4")
   .action(async (path) => {
-    await migrateApplicationToV4(path);
+    await migrate("application", path);
   });
 
 // `$ strapi-codemods migrate:plugin`
@@ -62,7 +59,11 @@ program
   .command("migrate:plugin [path] [pathForV4]")
   .description("Migrate a v3 dependencies to v4")
   .action(async (path, pathForV4) => {
-    await migratePluginToV4(path, pathForV4);
+    const pathForV4Plugin = pathForV4
+      ? resolve(pathForV4)
+      : resolve(`${path}-v4`);
+
+    await migrate("plugin", path, pathForV4Plugin);
   });
 
 // `$ strapi-codemods migrate:dependencies`
@@ -70,7 +71,7 @@ program
   .command("migrate:dependencies [path]")
   .description("Migrate a v3 Strapi plugin to v4")
   .action(async (path) => {
-    await migrateDependenciesToV4(path);
+    await migrate("dependencies", path);
   });
 
 // `$ strapi-codemods transform`
@@ -78,8 +79,7 @@ program
   .command("transform")
   .description("Transform v3 code in your v4 project")
   .action(async () => {
-    await isCleanGitRepo(process.cwd());
-    await transform();
+    await defaultTransform();
   });
 
 program.parse(process.argv);
