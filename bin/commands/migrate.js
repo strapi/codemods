@@ -9,16 +9,6 @@ const { migratePlugin, migrateApiFolder, migrateDependencies } = v4.migrationHel
 // Global utils
 const { isPathStrapiApp, logger, isCleanGitRepo, promptUser } = require('../../lib/global/utils');
 
-const checkIsValidPath = (path) => {
-  if (!isPathStrapiApp(path)) {
-    logger.error(
-      'The specified path is not a Strapi project. Please check the path and try again.'
-    );
-
-    process.exit(1);
-  }
-};
-
 const migrate = async (type, path, pathForV4Plugin) => {
   try {
     switch (type) {
@@ -51,7 +41,7 @@ const migrateApplicationToV4 = async (path) => {
   const projectPath = path || options.path;
 
   await isCleanGitRepo(projectPath);
-  await checkIsValidPath(projectPath);
+  await isPathStrapiApp(projectPath);
   await migrateDependencies(projectPath);
   await migrateApiFolder(projectPath);
 };
@@ -81,7 +71,7 @@ const migratePluginToV4 = async (pathToV3, pathForV4Plugin) => {
   const path = pathToV3 || response.path;
   const pathForV4 = pathForV4Plugin || response.pathForV4;
 
-  await checkIsValidPath(path);
+  await isPathStrapiApp(path);
   await migratePlugin(path, resolve(pathForV4));
 };
 
@@ -97,7 +87,7 @@ const migrateDependenciesToV4 = async (path) => {
   const response = await promptUser(promptOptions);
   const projectPath = path || response.path;
 
-  await checkIsValidPath(projectPath);
+  await isPathStrapiApp(projectPath);
   await migrateDependencies(projectPath);
 };
 
