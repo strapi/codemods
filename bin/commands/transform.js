@@ -1,25 +1,25 @@
 // jscodeshift executable
-const runJscodeshift = require("../../lib/v4/utils/run-jscodeshift");
+const { prompt, registerPrompt } = require('inquirer');
+const runJscodeshift = require('../../lib/v4/utils/run-jscodeshift');
 
 // Inquirer engine.
-const { prompt, registerPrompt } = require("inquirer");
-registerPrompt("fuzzypath", require("inquirer-fuzzy-path"));
+registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 
 // global utils
-const { utils } = require("../../lib/global");
-const { logger } = require("../../lib/global/utils");
+const { utils } = require('../../lib/global');
+const { logger } = require('../../lib/global/utils');
 
 const { formatCode } = utils;
 
 const fuzzyPathOptions = {
-  type: "fuzzypath",
+  type: 'fuzzypath',
   excludePath: (nodePath) =>
-    nodePath.includes("node_modules") ||
-    nodePath.includes("build") ||
+    nodePath.includes('node_modules') ||
+    nodePath.includes('build') ||
     nodePath.match(/^\/?(?:\w+\/)*(\.\w+)/),
   excludeFilter: (nodePath) =>
-    nodePath.includes("node_modules") ||
-    nodePath.includes("build") ||
+    nodePath.includes('node_modules') ||
+    nodePath.includes('build') ||
     nodePath.match(/^\/?(?:\w+\/)*(\.\w+)/),
   suggestOnly: false,
 };
@@ -30,42 +30,42 @@ const fuzzyPathOptions = {
  */
 const promptOptions = [
   {
-    type: "list",
-    name: "type",
-    message: "What kind of transformation do you want to perform?",
+    type: 'list',
+    name: 'type',
+    message: 'What kind of transformation do you want to perform?',
     choices: [
-      { name: "find -> findMany", value: "change-find-to-findMany" },
+      { name: 'find -> findMany', value: 'change-find-to-findMany' },
       {
-        name: "strapi-some-package -> @strapi/some-package",
-        value: "update-strapi-scoped-imports",
+        name: 'strapi-some-package -> @strapi/some-package',
+        value: 'update-strapi-scoped-imports',
       },
       {
-        name: ".models -> .contentTypes",
-        value: "change-model-getters-to-content-types",
+        name: '.models -> .contentTypes',
+        value: 'change-model-getters-to-content-types',
       },
       {
         name: "strapi.plugins['some-plugin'] -> strapi.plugin('some-plugin')",
-        value: "use-plugin-getters",
+        value: 'use-plugin-getters',
       },
       {
         name: "strapi.plugin('some-plugin').controllers['some-controller'] -> strapi.plugin('some-plugin').controller('some-controller')",
-        value: "update-top-level-plugin-getter",
+        value: 'update-top-level-plugin-getter',
       },
       {
-        name: "Add arrow function for service export",
-        value: "use-arrow-function-for-service-export",
+        name: 'Add arrow function for service export',
+        value: 'use-arrow-function-for-service-export',
       },
       {
-        name: "Add strapi to bootstrap function params",
-        value: "add-strapi-to-bootstrap-params",
+        name: 'Add strapi to bootstrap function params',
+        value: 'add-strapi-to-bootstrap-params',
       },
     ],
   },
   {
     ...fuzzyPathOptions,
-    name: "path",
-    message: "Enter the path to service(s) file(s)/folder",
-    itemType: "any",
+    name: 'path',
+    message: 'Enter the path to service(s) file(s)/folder',
+    itemType: 'any',
   },
 ];
 
