@@ -52,8 +52,8 @@ const promptOptions = [
         value: 'update-top-level-plugin-getter',
       },
       {
-        name: 'Add arrow function for service export',
-        value: 'use-arrow-function-for-service-export',
+        name: 'Convert object export to function export',
+        value: 'convert-object-export-to-function',
       },
       {
         name: 'Add strapi to bootstrap function params',
