@@ -52,7 +52,7 @@ program
   .command('migrate:plugin [path] [pathForV4]')
   .description('Migrate a v3 dependencies to v4')
   .action(async (path, pathForV4) => {
-    const pathForV4Plugin = pathForV4 ? resolve(pathForV4) : resolve(`${path}-v4`);
+    const pathForV4Plugin = pathForV4 ? resolve(pathForV4) : `${resolve(path)}-v4`;
 
     await migrate('plugin', path, pathForV4Plugin);
   });
