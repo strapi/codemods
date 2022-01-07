@@ -65,7 +65,7 @@ npx jscodeshift -t ./transforms/change-find-to-findMany.js <path-to-file(s)-or-f
 `strapi-some-package` => `@strapi/some-package`
 
 ```bash
-npx jscodeshift -t ./codemods/transforms/update-strapi-scoped-imports.js  <path-to-file(s)-or-folder>
+npx jscodeshift -t ./transforms/update-strapi-scoped-imports.js  <path-to-file(s)-or-folder>
 ```
 
 ### change-model-getters-to-content-types
@@ -81,7 +81,7 @@ npx jscodeshift -t ./transforms/change-model-getters-to-content-types.js <path-t
 `strapi.plugins['some-plugin']` => `strapi.plugin('some-plugin')`
 
 ```bash
-npx jscodeshift -t ./transforms/update-top-level-getters.js <path-to-file(s)-or-folder>
+npx jscodeshift -t ./transforms/update-top-level-plugin-getter.js <path-to-file(s)-or-folder>
 ```
 
 ### use-plugin-getters
