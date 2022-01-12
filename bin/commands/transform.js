@@ -16,10 +16,12 @@ const fuzzyPathOptions = {
   excludePath: (nodePath) =>
     nodePath.includes('node_modules') ||
     nodePath.includes('build') ||
+    // Exclude all dot files
     nodePath.match(/^\/?(?:\w+\/)*(\.\w+)/),
   excludeFilter: (nodePath) =>
     nodePath.includes('node_modules') ||
     nodePath.includes('build') ||
+    // Exclude all dot files
     nodePath.match(/^\/?(?:\w+\/)*(\.\w+)/),
   suggestOnly: false,
 };
@@ -64,7 +66,7 @@ const promptOptions = [
   {
     ...fuzzyPathOptions,
     name: 'path',
-    message: 'Enter the path to service(s) file(s)/folder',
+    message: 'Enter the path to a file(s)/folder',
     itemType: 'any',
   },
 ];
@@ -75,7 +77,7 @@ const transform = async () => {
     const options = await prompt(promptOptions);
 
     // execute jscodeshift's Runner
-    runJscodeshift(options.path, options.type);
+    await runJscodeshift(options.path, options.type);
 
     // format code with prettier
     await formatCode(options.path);

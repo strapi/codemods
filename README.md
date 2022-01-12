@@ -8,7 +8,7 @@
 
 - Migrate a Strapi application to v4
 - Migrate a Strapi plugin to v4
-- Migrate a Strapi application or plugin's dependecies to v4
+- Migrate a Strapi application or a plugin's dependecies to v4
 
 ## Getting started
 
@@ -79,7 +79,7 @@ yarn strapi-codemods migrate:dependencies <path>
 
 #### Transform
 
-:warning: _These command will modify your source code Before running any commands, be sure you have initialized a git repository, the working tree is clean, you've pushed your code to GitHub, and you are on a new branch._
+:warning: _This command will modify your source code. Be sure you have initialized a git repository, the working tree is clean, you've pushed your code to GitHub, and you are on a new branch._
 
 ```bash
 yarn strapi-codemods transform

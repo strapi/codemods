@@ -1,6 +1,9 @@
 // Node.js core
 const { resolve } = require('path');
 
+const fs = require('fs-extra');
+const chalk = require('chalk');
+
 // Migration Helpers
 const { v4 } = require('../../lib');
 
@@ -10,6 +13,13 @@ const { migratePlugin, migrateApiFolder, migrateDependencies } = v4.migrationHel
 const { isPathStrapiApp, logger, isCleanGitRepo, promptUser } = require('../../lib/global/utils');
 
 const migrate = async (type, path, pathForV4Plugin) => {
+  // Check the path exists
+  const exists = await fs.pathExists(resolve(path));
+  if (!exists) {
+    logger.error(`${chalk.yellow(resolve(path))} does not exist`);
+    process.exit(1)
+  }
+
   try {
     switch (type) {
       case 'application':
