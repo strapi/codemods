@@ -66,7 +66,7 @@ const promptOptions = [
   {
     ...fuzzyPathOptions,
     name: 'path',
-    message: 'Enter the path to a file(s)/folder',
+    message: 'Enter the path to a file or folder',
     itemType: 'any',
   },
 ];
