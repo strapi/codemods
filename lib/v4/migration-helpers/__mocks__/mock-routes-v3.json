@@ -2,7 +2,7 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/test/",
+      "path": "/test",
       "handler": "test.index",
       "config": {
         "policies": []
