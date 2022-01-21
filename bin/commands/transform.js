@@ -73,14 +73,11 @@ const promptOptions = [
 
 // `strapi-codemods transform`
 const transform = async (transform, path) => {
-  
   try {
     let args;
     if (transform && path) {
       args = { path, type: transform };
-    }
-
-    if (transform && !path) {
+    } else if (transform && !path) {
       // Ask for path
       const response = await prompt({
         ...fuzzyPathOptions,
@@ -90,15 +87,11 @@ const transform = async (transform, path) => {
       });
 
       args = { path: response.path, type: transform };
-    }
-
-    if (!transform && !path) {
-      console.log("coucou")
+    } else if (!transform && !path) {
       // Ask for everything
       args = await prompt(promptOptions);
-      console.log(args)
     }
-    
+
     // execute jscodeshift's Runner
     await runJscodeshift(args.path, args.type, { stdio: 'inherit', cwd: process.cwd() });
 
