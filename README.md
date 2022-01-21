@@ -6,9 +6,9 @@
 
 ## Features
 
-- Migrate whole project structure
-- Switch to the latest strapi v4 dependencies
-- Migrate each plugin you want to follow latest v4 plugin guideline
+- Migrate a Strapi application to v4
+- Migrate a Strapi plugin to v4
+- Migrate a Strapi application or a plugin's dependecies to v4
 
 ## Getting started
 
@@ -32,78 +32,83 @@ Before running any commands, be sure you have initialized a git repository, the 
 
 #### Migrate
 
-*Usage with prompt*
+_Usage with prompt_
 
 ```bash
 yarn strapi-codemods migrate
 ```
-OR
+
+or
+
 ```bash
 npx strapi-codemods migrate
 ```
 
-The prompt will ask you 3 things:
+The prompt will ask you:
 
-1. First, you have to chose what do you want to migrate:
-  - `Project` (folder structure + dependencies)
-  - `Dependencies` (Only dump dependencies to the latest v4 release)
-  - `Plugin` (give you the ability to migrate the folder structure of a specific plugin)
-3. Then, where is your Strapi application folder (default: `./`).
-4. Finally, if you chose to migrate a plugin it will ask for the plugin's name.
+- What do you want to migrate?
+  - `Application` (migrate folder structure + dependencies)
+  - `Plugin` (migrate folder structure + dependencies)
+  - `Dependencies` (on migrate dependencies)
+- Where is the project located? (default: `./`).
+- _(plugin only)_ Where do you want to create the v4 plugin
 
+_Bypass the prompt_
 
-*Bypass the prompt*
+To bypass the prompts use one of the following commands:
 
-If you are annoyed by the prompt and want to use plain command line then we provide you some options:
-
-- `Project` migration
-
-```bash
-yarn strapi-codemods migrate --project <path>
-```
-
-- `Dependencies` migration
+- `Application` migration
 
 ```bash
-yarn strapi-codemods migrate --dependencies <path>
+yarn strapi-codemods migrate:application <path>
 ```
 
 - `Plugin` migration
 
 ```bash
-yarn strapi-codemods migrate --plugin <path>
+yarn strapi-codemods migrate:plugin <path> [pathForV4Plugin]
 ```
-> Note that for plugin migration you can only specify the path of the v3 plugin. The v4 plugin will take the name of v3 plugin concat with `-v4`
 
+> Note: if no `pathForV4Plugin` is provided it will be created at `<path>-v4`
+
+- `Dependencies` migration
+
+```bash
+yarn strapi-codemods migrate:dependencies <path>
+```
 
 #### Transform
+
+:warning: _This command will modify your source code. Be sure you have initialized a git repository, the working tree is clean, you've pushed your code to GitHub, and you are on a new branch._
 
 ```bash
 yarn strapi-codemods transform
 ```
 
-OR
+or
 
 ```bash
 npx strapi-codemods transform
 ```
 
-1. First, the prompt will ask you what kind of transformation you want to perform:
+The prompt will ask two questions:
 
-- `find` -> `findMany`: Change `find` method to `findMany`
+- What kind of transformation you want to perform:
 
-- `strapi-some-package` -> `@strapi/some-package`: Update strapi scoped imports
+  - `find` -> `findMany`: Change `find` method to `findMany`
 
-- `.models` -> `.contentTypes`: Change model getters to content types
+  - `strapi-some-package` -> `@strapi/some-package`: Update strapi scoped imports
 
-- `strapi.plugins['some-plugin']` -> `strapi.plugin('some-plugin')`: Update top level plugin getters
+  - `.models` -> `.contentTypes`: Change model getters to content types
 
-- `strapi.plugin('some-plugin').controllers['some-controller']` -> `strapi.plugin('some-plugin').controller('some-controller')`: Use plugin getters
+  - `strapi.plugins['some-plugin']` -> `strapi.plugin('some-plugin')`: Update top level plugin getters
 
-- Add arrow function for service export
+  - `strapi.plugin('some-plugin').controllers['some-controller']` -> `strapi.plugin('some-plugin').controller('some-controller')`: Use plugin getters
 
-- Add strapi to bootstrap function params
+  - Add arrow function for service export
 
-2. Then, where is the file(s) or folder to transform
+  - Add strapi to bootstrap function params
+
+- Where is the file(s) or folder to transform
 
 Enjoy 🎉
