@@ -67,10 +67,10 @@ program
 
 // `$ strapi-codemods transform`
 program
-  .command('transform')
+  .command('transform [type] [path]')
   .description('Transform v3 code in your v4 project')
-  .action(async () => {
-    await defaultTransform();
+  .action(async (type, path) => {
+    await defaultTransform(type, path);
   });
 
 program.parse(process.argv);

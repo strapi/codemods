@@ -72,15 +72,38 @@ const promptOptions = [
 ];
 
 // `strapi-codemods transform`
-const transform = async () => {
+const transform = async (transform, path) => {
+  
   try {
-    const options = await prompt(promptOptions);
+    let args;
+    if (transform && path) {
+      args = { path, type: transform };
+    }
 
+    if (transform && !path) {
+      // Ask for path
+      const response = await prompt({
+        ...fuzzyPathOptions,
+        name: 'path',
+        message: 'Enter the path to a file or folder',
+        itemType: 'any',
+      });
+
+      args = { path: response.path, type: transform };
+    }
+
+    if (!transform && !path) {
+      console.log("coucou")
+      // Ask for everything
+      args = await prompt(promptOptions);
+      console.log(args)
+    }
+    
     // execute jscodeshift's Runner
-    await runJscodeshift(options.path, options.type);
+    await runJscodeshift(args.path, args.type, { stdio: 'inherit', cwd: process.cwd() });
 
     // format code with prettier
-    await formatCode(options.path);
+    await formatCode(args.path);
   } catch (error) {
     logger.error(error.message);
     process.exit(1);
