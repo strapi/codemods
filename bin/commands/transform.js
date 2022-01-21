@@ -26,6 +26,13 @@ const fuzzyPathOptions = {
   suggestOnly: false,
 };
 
+const fuzzyPromptOptions = {
+  ...fuzzyPathOptions,
+  name: 'path',
+  message: 'Enter the path to a file or folder',
+  itemType: 'any',
+};
+
 /**
  * Prompt's configuration
  * choices array value have to be the name of transform file
@@ -63,12 +70,7 @@ const promptOptions = [
       },
     ],
   },
-  {
-    ...fuzzyPathOptions,
-    name: 'path',
-    message: 'Enter the path to a file or folder',
-    itemType: 'any',
-  },
+  fuzzyPromptOptions,
 ];
 
 // `strapi-codemods transform`
@@ -76,16 +78,11 @@ const transform = async (transform, path) => {
   try {
     let args;
     if (transform && path) {
+      // Use provided arguments
       args = { path, type: transform };
     } else if (transform && !path) {
-      // Ask for path
-      const response = await prompt({
-        ...fuzzyPathOptions,
-        name: 'path',
-        message: 'Enter the path to a file or folder',
-        itemType: 'any',
-      });
-
+      // Use provided transform and ask for path
+      const response = await prompt(fuzzyPromptOptions);
       args = { path: response.path, type: transform };
     } else if (!transform && !path) {
       // Ask for everything
