@@ -1,11 +1,8 @@
 {
   "name": "@strapi/codemods",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "bin/cli.js",
   "license": "MIT",
-  "bin": {
-    "strapi-codemods": "bin/cli.js"
-  },
   "files": [
     "bin/",
     "lib/"
