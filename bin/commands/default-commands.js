@@ -3,9 +3,9 @@ const { isCleanGitRepo, promptUser } = require('../../lib/global/utils');
 const migrate = require('./migrate');
 const transform = require('./transform');
 
-const defaultTransform = async () => {
+const defaultTransform = async (type, path) => {
   await isCleanGitRepo(process.cwd());
-  await transform();
+  await transform(type, path);
 };
 
 const defaultMigrate = async () => {
