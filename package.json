@@ -1,18 +1,43 @@
 {
-  "name": "codemod",
+  "name": "@strapi/codemods",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "bin": {
+    "strapi-codemods": "bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "lib/"
+  ],
   "scripts": {
-    "test": "jest"
+    "test": "jest --verbose",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "dependencies": {
+    "@babel/preset-env": "^7.1.6",
     "axios": "^0.21.2",
+    "chalk": "^4.1.2",
+    "commander": "^8.2.0",
+    "eslint": "7.25.0",
+    "eslint-config-airbnb": "18.2.1",
+    "eslint-config-airbnb-base": "14.2.1",
+    "eslint-config-prettier": "6.15.0",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-node": "11.1.0",
     "execa": "^5.1.1",
     "fs-extra": "^10.0.0",
-    "jscodeshift": "^0.11.0",
+    "inquirer": "^8.2.0",
+    "inquirer-fuzzy-path": "^2.3.0",
+    "jscodeshift": "^0.13.0",
     "lodash": "^4.17.21",
-    "pluralize": "^8.0.0"
+    "pluralize": "^8.0.0",
+    "prettier": "^2.4.1"
+  },
+  "engines": {
+    "node": ">=12.x.x <=16.x.x",
+    "npm": ">=6.0.0"
   },
   "devDependencies": {
     "jest": "^27.0.6"
