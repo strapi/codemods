@@ -1,12 +1,15 @@
 {
   "name": "@strapi/codemods",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "bin/cli.js",
   "license": "MIT",
   "files": [
     "bin/",
     "lib/"
   ],
+  "bin": {
+    "codemods": "bin/cli.js"
+  },
   "scripts": {
     "test": "jest --verbose",
     "lint": "eslint .",
