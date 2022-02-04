@@ -35,13 +35,13 @@ Before running any commands, be sure you have initialized a git repository, the 
 _Usage with prompt_
 
 ```bash
-yarn strapi-codemods migrate
+yarn @strapi/codemods migrate
 ```
 
 or
 
 ```bash
-npx strapi-codemods migrate
+npx @strapi/codemods migrate
 ```
 
 The prompt will ask you:
@@ -60,13 +60,13 @@ To bypass the prompts use one of the following commands:
 - `Application` migration
 
 ```bash
-yarn strapi-codemods migrate:application <path>
+yarn @strapi/codemods migrate:application <path>
 ```
 
 - `Plugin` migration
 
 ```bash
-yarn strapi-codemods migrate:plugin <path> [pathForV4Plugin]
+yarn @strapi/codemods migrate:plugin <path> [pathForV4Plugin]
 ```
 
 > Note: if no `pathForV4Plugin` is provided it will be created at `<path>-v4`
@@ -74,7 +74,7 @@ yarn strapi-codemods migrate:plugin <path> [pathForV4Plugin]
 - `Dependencies` migration
 
 ```bash
-yarn strapi-codemods migrate:dependencies <path>
+yarn @strapi/codemods migrate:dependencies <path>
 ```
 
 #### Transform
@@ -82,13 +82,13 @@ yarn strapi-codemods migrate:dependencies <path>
 :warning: _This command will modify your source code. Be sure you have initialized a git repository, the working tree is clean, you've pushed your code to GitHub, and you are on a new branch._
 
 ```bash
-yarn strapi-codemods transform
+yarn @strapi/codemods transform
 ```
 
 or
 
 ```bash
-npx strapi-codemods transform
+npx @strapi/codemods transform
 ```
 
 The prompt will ask two questions:
