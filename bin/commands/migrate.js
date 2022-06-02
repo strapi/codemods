@@ -56,7 +56,6 @@ const migrateApplicationToV4 = async (path) => {
   await migrateDependencies(projectPath);
   await migrateApplicationFolderStructure(projectPath);
   await migrateApiFolder(projectPath);
-  
 };
 
 // `strapi-codemods migrate:plugin`
