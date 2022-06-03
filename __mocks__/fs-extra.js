@@ -11,6 +11,7 @@ jest.mock('fs-extra', () => ({
   copy: jest.fn(() => Promise.resolve()),
   move: jest.fn(() => Promise.resolve()),
   createWriteStream: jest.fn(),
+  rename: jest.fn(() => Promise.resolve())
 }));
 
 module.exports = fsExtra;
