@@ -7,7 +7,8 @@ const chalk = require('chalk');
 // Migration Helpers
 const { v4 } = require('../../lib');
 
-const { migratePlugin, migrateApiFolder, migrateDependencies } = v4.migrationHelpers;
+const { migratePlugin, migrateApiFolder, migrateDependencies, migrateApplicationFolderStructure } =
+  v4.migrationHelpers;
 
 // Global utils
 const { isPathStrapiApp, logger, isCleanGitRepo, promptUser } = require('../../lib/global/utils');
@@ -17,7 +18,7 @@ const migrate = async (type, path, pathForV4Plugin) => {
   const exists = await fs.pathExists(resolve(path));
   if (!exists) {
     logger.error(`${chalk.yellow(resolve(path))} does not exist`);
-    process.exit(1)
+    process.exit(1);
   }
 
   try {
@@ -53,6 +54,7 @@ const migrateApplicationToV4 = async (path) => {
   await isCleanGitRepo(projectPath);
   await isPathStrapiApp(projectPath);
   await migrateDependencies(projectPath);
+  await migrateApplicationFolderStructure(projectPath);
   await migrateApiFolder(projectPath);
 };
 
