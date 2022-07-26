@@ -35,7 +35,7 @@ Before running any commands, be sure you have initialized a git repository, the 
 _Usage with prompt_
 
 ```bash
-yarn @strapi/codemods migrate
+yarn codemods migrate
 ```
 
 or
