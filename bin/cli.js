@@ -42,9 +42,14 @@ program
 // `$ strapi-codemods migrate:application`
 program
   .command('migrate:application [path]')
+  .option(
+    "--skip-working-tree-check",
+    "Skip checking whether the Git working tree is clean. Especially useful for monorepos.",
+    undefined
+  )
   .description('Migrate a v3 Strapi application to v4')
-  .action(async (path) => {
-    await migrate('application', path);
+  .action(async (path, options) => {
+    await migrate('application', path, undefined, options);
   });
 
 // `$ strapi-codemods migrate:plugin`

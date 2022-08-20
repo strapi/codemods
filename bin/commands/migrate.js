@@ -13,7 +13,7 @@ const { migratePlugin, migrateApiFolder, migrateDependencies, migrateApplication
 // Global utils
 const { isPathStrapiApp, logger, isCleanGitRepo, promptUser } = require('../../lib/global/utils');
 
-const migrate = async (type, path, pathForV4Plugin) => {
+const migrate = async (type, path, pathForV4Plugin, cliOptions) => {
   // Check the path exists
   const exists = await fs.pathExists(resolve(path));
   if (!exists) {
@@ -24,7 +24,7 @@ const migrate = async (type, path, pathForV4Plugin) => {
   try {
     switch (type) {
       case 'application':
-        await migrateApplicationToV4(path);
+        await migrateApplicationToV4(path, cliOptions);
         break;
       case 'dependencies':
         await migrateDependenciesToV4(path);
@@ -40,7 +40,7 @@ const migrate = async (type, path, pathForV4Plugin) => {
 };
 
 // `strapi-codemods migrate:application`
-const migrateApplicationToV4 = async (path) => {
+const migrateApplicationToV4 = async (path, cliOptions) => {
   const promptOptions = {
     type: 'input',
     name: 'path',
@@ -51,7 +51,9 @@ const migrateApplicationToV4 = async (path) => {
   const options = await promptUser(promptOptions);
   const projectPath = path || options.path;
 
-  await isCleanGitRepo(projectPath);
+  if (!cliOptions.skipWorkingTreeCheck) {
+    await isCleanGitRepo(projectPath);
+  }
   await isPathStrapiApp(projectPath);
   await migrateDependencies(projectPath);
   await migrateApplicationFolderStructure(projectPath);

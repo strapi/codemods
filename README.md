@@ -63,6 +63,12 @@ To bypass the prompts use one of the following commands:
 yarn @strapi/codemods migrate:application <path>
 ```
 
+💡 If you want to skip the Git working tree check, run the command with the `--skip-working-tree-check` argument. This is especially useful for monorepos where Strapi doesn't have its own `.git` directory.
+
+```bash
+yarn @strapi/codemods migrate:application <path> --skip-working-tree-check
+```
+
 - `Plugin` migration
 
 ```bash
