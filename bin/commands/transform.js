@@ -6,10 +6,7 @@ const runJscodeshift = require('../../lib/v4/utils/run-jscodeshift');
 registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 
 // global utils
-const { utils } = require('../../lib/global');
 const { logger } = require('../../lib/global/utils');
-
-const { formatCode } = utils;
 
 const fuzzyPathOptions = {
   type: 'fuzzypath',
@@ -91,9 +88,6 @@ const transform = async (transform, path) => {
 
     // execute jscodeshift's Runner
     await runJscodeshift(args.path, args.type, { stdio: 'inherit', cwd: process.cwd() });
-
-    // format code with prettier
-    await formatCode(args.path);
   } catch (error) {
     logger.error(error.message);
     process.exit(1);
