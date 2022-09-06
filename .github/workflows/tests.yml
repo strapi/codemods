@@ -1,5 +1,14 @@
 name: 'Tests'
-on: [push]
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - '**.mdx?'
+      - '**.md?'
+
 jobs:
   unit_tests:
     name: 'unit_tests (node: ${{ matrix.node }})'
