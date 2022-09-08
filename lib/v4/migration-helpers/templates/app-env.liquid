@@ -10,14 +10,14 @@ ADMIN_JWT_SECRET={{ adminJwtSecret }}
 ## Users-Permissions Plugin Settings
 JWT_SECRET={{ jwtSecret }}
 
-{% if databaseType == 'mysql'%}
+{% if databaseType == 'mysql' %}
   DATABASE_HOST={{ databaseHost }}
   DATABASE_PORT={{ databasePort }}
   DATABASE_NAME={{ databaseName }}
   DATABASE_USERNAME={{ databaseUsername }}
   DATABASE_PASSWORD={{ databasePassword }}
   DATABASE_SSL={{ databaseSsl }}
-{% else if databaseType == 'postgres' %}
+{% elsif databaseType == 'postgres' %}
   DATABASE_HOST={{ databaseHost }}
   DATABASE_PORT={{ databasePort }}
   DATABASE_NAME={{ databaseName }}
