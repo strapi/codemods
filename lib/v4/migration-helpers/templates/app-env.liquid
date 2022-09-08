@@ -1,0 +1,30 @@
+## Server Settings
+HOST={{ host }}
+PORT={{ port }}
+APP_KEYS={{ appKeys1 }},{{ appKeys2 }},{{ appKeys3 }},{{ appKeys4 }}
+
+## Admin Settings
+API_TOKEN_SALT={{ apiTokenSalt }}
+ADMIN_JWT_SECRET={{ adminJwtSecret }}
+
+## Users-Permissions Plugin Settings
+JWT_SECRET={{ jwtSecret }}
+
+{% if databaseType == 'mysql'%}
+  DATABASE_HOST={{ databaseHost }}
+  DATABASE_PORT={{ databasePort }}
+  DATABASE_NAME={{ databaseName }}
+  DATABASE_USERNAME={{ databaseUsername }}
+  DATABASE_PASSWORD={{ databasePassword }}
+  DATABASE_SSL={{ databaseSsl }}
+{% else if databaseType == 'postgres' %}
+  DATABASE_HOST={{ databaseHost }}
+  DATABASE_PORT={{ databasePort }}
+  DATABASE_NAME={{ databaseName }}
+  DATABASE_USERNAME={{ databaseUsername }}
+  DATABASE_PASSWORD={{ databasePassword }}
+  DATABASE_SSL={{ databaseSsl }}
+  DATABASE_SCHEMA={{ databaseSchema }}
+{% else %}
+  DATABASE_FILENAME={{ databaseFilename }}
+{% endif %}
