@@ -10,5 +10,9 @@
     "strapi-plugin-upload": "3.6.8",
     "strapi-plugin-i18n": "3.6.8",
     "strapi-connector-bookshelf": "3.6.8"
+  },
+  "engines": {
+    "node": ">=10.16.0 <=14.x.x",
+    "npm": ">=10.16.0 <=14.x.x"
   }
 }
